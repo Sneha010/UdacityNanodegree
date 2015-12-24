@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.udacity.myappportfolio.MainActivity">
+
+    <include
+        android:id="@+id/toolbar" layout="@layout/toolbar"/>
+
+    <com.udacity.myappportfolio.util.TextViewGothamBook
+        android:id="@+id/tv_heading"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/landing_header"
+        android:textSize="@dimen/xxlarge_text_size"
+        android:layout_below="@id/toolbar"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="15dp"
+        android:textColor="@color/primaryTextColor"/>
+
+    <ScrollView
+        android:layout_below="@id/tv_heading"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="5dp"
+        android:scrollbars="none">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal">
+
+        <Button
+            android:id="@+id/btn_spotifyStreamer"
+            style="@style/LandingButtonStyle"
+            android:layout_width="250dp"
+            android:layout_height="wrap_content"
+            android:text="@string/landing_btnText_spotifyStreamer"
+            android:layout_marginTop="10dp"
+            />
+        <Button
+            android:id="@+id/btn_scoresApp"
+            style="@style/LandingButtonStyle"
+            android:layout_width="250dp"
+            android:layout_height="wrap_content"
+            android:text="@string/landing_btnText_scoresApp"
+            android:layout_below="@id/btn_spotifyStreamer"
+            android:layout_marginTop="10dp"/>
+
+            <Button
+                android:id="@+id/btn_libraryApp"
+                style="@style/LandingButtonStyle"
+                android:layout_width="250dp"
+                android:layout_height="wrap_content"
+                android:text="@string/landing_btnText_libraryApp"
+                android:layout_below="@id/btn_scoresApp"
+                android:layout_marginTop="12dp"/>
+
+            <Button
+                android:id="@+id/btn_buildItBigger"
+                style="@style/LandingButtonStyle"
+                android:layout_width="250dp"
+                android:layout_height="wrap_content"
+                android:text="@string/landing_btnText_buildItBigger"
+                android:layout_below="@id/btn_libraryApp"
+                android:layout_marginTop="12dp"/>
+            <Button
+                android:id="@+id/btn_xyzReader"
+                style="@style/LandingButtonStyle"
+                android:layout_width="250dp"
+                android:layout_height="wrap_content"
+                android:text="@string/landing_btnText_xyzReader"
+                android:layout_below="@id/btn_buildItBigger"
+                android:layout_marginTop="12dp"/>
+            <Button
+                android:id="@+id/btn_capstone"
+                android:layout_width="250dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:textSize="@dimen/large_text_size"
+                android:text="@string/landing_btnText_capstone"
+                android:textColor="@color/white"
+                android:layout_below="@id/btn_xyzReader"
+                android:background="@drawable/accent_button_bg"
+                android:layout_marginTop="12dp"/>
+
+
+        </RelativeLayout>
+
+        </ScrollView>
+
+
+</RelativeLayout>
