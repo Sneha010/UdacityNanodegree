@@ -42,6 +42,7 @@ public class MainActivity extends AppCompatActivity {
 
             case R.id.btn_buildItBigger:
                 displayToast(getResources().getString(R.string.landing_button4_toast));
+
                 break;
 
             case R.id.btn_xyzReader:
