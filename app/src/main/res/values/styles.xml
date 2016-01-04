@@ -17,5 +17,9 @@
         <item name="android:layout_gravity">center_horizontal</item>
         <item name="android:background">@drawable/button_bg</item>
     </style>
+    <style name="ColorsCircularProgressDrawableStyle" parent="Material.Drawable.CircularProgress">
+        <item name="cpd_strokeColors">@array/progress_colors</item>
+    </style>
+
 
 </resources>
