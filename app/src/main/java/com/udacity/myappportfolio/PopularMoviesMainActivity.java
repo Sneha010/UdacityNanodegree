@@ -71,6 +71,16 @@ public class PopularMoviesMainActivity extends BaseActivity{
         setContentView(R.layout.popular_movies_main_layout);
         ButterKnife.bind(this);
 
+
+        setupUI();
+        showProgress();
+        setUpGridListView();
+        setUpRetrofit();
+        executeRetrofittask();
+    }
+
+    public void setupUI(){
+
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle(getResources().getString(R.string.app_name_proj2));
 
@@ -83,12 +93,21 @@ public class PopularMoviesMainActivity extends BaseActivity{
             }
         });
 
-        showProgress();
-        setUpGridListView();
-        setUpRetrofit();
-        executeRetrofittask();
-    }
+        lv_gridList.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+            }
 
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+
+
+            }
+        });
+
+    }
     public void setUpGridListView(){
         GridLayoutManager llm = new GridLayoutManager(PopularMoviesMainActivity.this , 2);
         llm.setOrientation(LinearLayoutManager.VERTICAL);
