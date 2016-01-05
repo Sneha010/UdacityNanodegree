@@ -1,13 +1,16 @@
 package com.udacity.myappportfolio;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -58,6 +61,7 @@ public class PopularMoviesMainActivity extends BaseActivity{
     SwipeRefreshLayout mSwipeRefreshLayout;
 
     boolean isRefresh = false;
+    boolean setSortByPopularityChecked = true;
     Call<MovieMainBean> call;
 
 
@@ -164,6 +168,62 @@ public class PopularMoviesMainActivity extends BaseActivity{
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        return super.onCreateOptionsMenu(menu);
+        super.onCreateOptionsMenu(menu);
+        getMenuInflater().inflate(R.menu.sort_movies_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        super.onOptionsItemSelected(item);
+        switch (item.getItemId()) {
+
+            case R.id.action_sort:
+            showPopUpMenu((View) findViewById(R.id.action_sort));
+                break;
+
+            default:
+
+        }
+
+        return true;
+    }
+
+    public void showPopUpMenu(View menuItemAnchor){
+        PopupMenu popup = new PopupMenu(this,
+                menuItemAnchor);
+        popup.getMenuInflater().inflate(R.menu.radio_menu, popup.getMenu());
+
+        MenuItem item_popularity= popup.getMenu().findItem(R.id.sort_by_popularity);
+        MenuItem item_voting= popup.getMenu().findItem(R.id.sort_by_voting);
+
+        if(setSortByPopularityChecked){
+            item_popularity.setChecked(true);
+        }else{
+            item_voting.setChecked(false);
+        }
+
+        PopUpMenuEventHandle popUpMenuEventHandle=new PopUpMenuEventHandle(PopularMoviesMainActivity.this);
+        popup.setOnMenuItemClickListener(popUpMenuEventHandle);
+        popup.show();
+    }
+
+    public class PopUpMenuEventHandle implements PopupMenu.OnMenuItemClickListener {
+        Context context;
+        public PopUpMenuEventHandle(Context context){
+            this.context =context;
+        }
+        @Override
+        public boolean onMenuItemClick(MenuItem item) {
+            if (item.getItemId()==R.id.sort_by_popularity) {
+                setSortByPopularityChecked = true;
+                return true;
+            }
+            if (item.getItemId()==R.id.sort_by_voting){
+                setSortByPopularityChecked = false;
+                return true;
+            }
+            return false;
+        }
     }
 }
