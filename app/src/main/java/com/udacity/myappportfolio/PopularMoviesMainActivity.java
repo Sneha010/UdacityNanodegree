@@ -3,7 +3,6 @@ package com.udacity.myappportfolio;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.PopupMenu;
@@ -57,13 +56,12 @@ public class PopularMoviesMainActivity extends BaseActivity {
     @Bind(R.id.tv_errorMessage)
     TextView tv_errorMessage;
 
-    @Bind(R.id.swipe_container)
-    SwipeRefreshLayout mSwipeRefreshLayout;
+    @Bind(R.id.rl_gridView)
+    RelativeLayout rl_gridView;
 
     @Bind(R.id.progress_pv_circular_colors)
     ProgressView listProgressView;
 
-    boolean isRefresh = false;
     boolean setSortByPopularityChecked = true;
     Call<MovieMainBean> call;
 
@@ -88,18 +86,24 @@ public class PopularMoviesMainActivity extends BaseActivity {
         executeRetrofittask();
     }
 
+
     public void prepareUI(){
 
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle(getResources().getString(R.string.app_name_proj2));
 
         setUpGridListView();
+        setUpListeners();
 
-        mSwipeRefreshLayout.setRefreshing(true);
-        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+
+    }
+
+    public void setUpListeners(){
+
+        rl_error.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onRefresh() {
-                isRefresh = true;
+            public void onClick(View view) {
+                dynamicResultList.clear();
                 page = 1;
                 executeRetrofittask();
             }
@@ -138,6 +142,7 @@ public class PopularMoviesMainActivity extends BaseActivity {
         });
 
     }
+
     public void setUpGridListView(){
         mLayoutManager = new GridLayoutManager(PopularMoviesMainActivity.this , 2);
         mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
@@ -169,6 +174,7 @@ public class PopularMoviesMainActivity extends BaseActivity {
                 MovieMainBean bean = response.body();
 
                 if(bean!=null){
+
                     if(bean.getResults()!=null && bean.getResults().size()>0){
                         page++;
                         loading = true;
@@ -205,24 +211,27 @@ public class PopularMoviesMainActivity extends BaseActivity {
 
     public void showProgress(){
         rl_progress.setVisibility(View.VISIBLE);
-        mSwipeRefreshLayout.setVisibility(View.GONE);
+        rl_gridView.setVisibility(View.GONE);
         rl_error.setVisibility(View.GONE);
+        listProgressView.setVisibility(View.GONE);
     }
 
     public void showListProgress(){
         rl_progress.setVisibility(View.GONE);
-        mSwipeRefreshLayout.setVisibility(View.GONE);
+        rl_gridView.setVisibility(View.GONE);
         rl_error.setVisibility(View.GONE);
         listProgressView.setVisibility(View.VISIBLE);
     }
     public void showGrid(){
         rl_progress.setVisibility(View.GONE);
-        mSwipeRefreshLayout.setVisibility(View.VISIBLE);
+        rl_gridView.setVisibility(View.VISIBLE);
         rl_error.setVisibility(View.GONE);
+        listProgressView.setVisibility(View.GONE);
     }
     public void showError(String message){
         rl_progress.setVisibility(View.GONE);
-        mSwipeRefreshLayout.setVisibility(View.GONE);
+        rl_gridView.setVisibility(View.GONE);
+        listProgressView.setVisibility(View.GONE);
         rl_error.setVisibility(View.VISIBLE);
         tv_errorMessage.setText(message);
 

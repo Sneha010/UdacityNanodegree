@@ -14,15 +14,13 @@
         android:orientation="vertical"
         android:layout_below="@id/toolbar">
 
-        <android.support.v4.widget.SwipeRefreshLayout
-            android:id="@+id/swipe_container"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:padding="2.5dp">
+
 
             <RelativeLayout
+                android:id="@+id/rl_gridView"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent"
+                android:padding="2.5dp">
 
 
             <android.support.v7.widget.RecyclerView
@@ -45,7 +43,6 @@
                 android:visibility="gone"/>
             </RelativeLayout>
 
-        </android.support.v4.widget.SwipeRefreshLayout>
 
         <RelativeLayout
             android:id="@+id/rl_progress"
