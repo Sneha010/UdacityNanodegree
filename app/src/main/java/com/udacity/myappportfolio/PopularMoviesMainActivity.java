@@ -9,18 +9,21 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.rey.material.widget.ProgressView;
 import com.udacity.myappportfolio.adapter.MovieRecyclerViewAdapter;
 import com.udacity.myappportfolio.bean.Movie;
 import com.udacity.myappportfolio.bean.MovieMainBean;
 import com.udacity.myappportfolio.interfaces.MovieRestAPI;
 import com.udacity.myappportfolio.util.Constants;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.Bind;
@@ -37,7 +40,7 @@ import retrofit.Retrofit;
 /**
  * Created by 587823 on 1/1/2016.
  */
-public class PopularMoviesMainActivity extends BaseActivity{
+public class PopularMoviesMainActivity extends BaseActivity {
 
     @Bind(R.id.toolbar)
     Toolbar toolbar;
@@ -54,15 +57,23 @@ public class PopularMoviesMainActivity extends BaseActivity{
     @Bind(R.id.tv_errorMessage)
     TextView tv_errorMessage;
 
-    @Bind(R.id.rl_gridview)
-    RelativeLayout rl_gridview;
-
     @Bind(R.id.swipe_container)
     SwipeRefreshLayout mSwipeRefreshLayout;
+
+    @Bind(R.id.progress_pv_circular_colors)
+    ProgressView listProgressView;
 
     boolean isRefresh = false;
     boolean setSortByPopularityChecked = true;
     Call<MovieMainBean> call;
+
+    private boolean loading = true;
+    private int pastVisiblesItems, visibleItemCount, totalItemCount;
+    private GridLayoutManager mLayoutManager;
+    private MovieRestAPI myService;
+    private String sort_by = Constants.POPULARITY;
+    private int page = 1;
+    private ArrayList<Movie> dynamicResultList = new ArrayList<>();
 
 
     @Override
@@ -72,23 +83,24 @@ public class PopularMoviesMainActivity extends BaseActivity{
         ButterKnife.bind(this);
 
 
-        setupUI();
-        showProgress();
-        setUpGridListView();
+        prepareUI();
         setUpRetrofit();
         executeRetrofittask();
     }
 
-    public void setupUI(){
+    public void prepareUI(){
 
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle(getResources().getString(R.string.app_name_proj2));
+
+        setUpGridListView();
 
         mSwipeRefreshLayout.setRefreshing(true);
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 isRefresh = true;
+                page = 1;
                 executeRetrofittask();
             }
         });
@@ -103,15 +115,33 @@ public class PopularMoviesMainActivity extends BaseActivity{
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
 
+                if(dy > 0) //check for scroll down
+                {
+                    visibleItemCount = mLayoutManager.getChildCount();
+                    totalItemCount = mLayoutManager.getItemCount();
+                    pastVisiblesItems = mLayoutManager.findFirstVisibleItemPosition();
+
+                    Log.d("@@@" , "visibleItemCount = "+visibleItemCount+" totalItemCount = "+totalItemCount+" pastVisiblesItems = "+pastVisiblesItems);
+
+                    if (loading)
+                    {
+                        if ( (visibleItemCount + pastVisiblesItems) >= totalItemCount)
+                        {
+                            loading = false;
+                            //Do pagination.. i.e. fetch new data
+                            executeRetrofittask();
+                        }
+                    }
+                }
 
             }
         });
 
     }
     public void setUpGridListView(){
-        GridLayoutManager llm = new GridLayoutManager(PopularMoviesMainActivity.this , 2);
-        llm.setOrientation(LinearLayoutManager.VERTICAL);
-        lv_gridList.setLayoutManager(llm);
+        mLayoutManager = new GridLayoutManager(PopularMoviesMainActivity.this , 2);
+        mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        lv_gridList.setLayoutManager(mLayoutManager);
     }
 
     public void setUpRetrofit(){
@@ -120,14 +150,17 @@ public class PopularMoviesMainActivity extends BaseActivity{
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
-        MovieRestAPI myService = retrofit.create(MovieRestAPI.class);
-        call = myService.loadMovies("popularity.desc" , "c828d18e73df20d04a0a762f7a126d29" , "1");
-
-
-
+        myService = retrofit.create(MovieRestAPI.class);
     }
 
     public void executeRetrofittask(){
+        if(dynamicResultList.size() > 0){
+            showListProgress();
+        }else{
+            showProgress();
+        }
+
+        call = myService.loadMovies(sort_by , Constants.API_KEY , page+"");
         call.enqueue(new Callback<MovieMainBean>() {
             @Override
             public void onResponse(Response<MovieMainBean> response,
@@ -137,7 +170,10 @@ public class PopularMoviesMainActivity extends BaseActivity{
 
                 if(bean!=null){
                     if(bean.getResults()!=null && bean.getResults().size()>0){
-                        displayMovieList(bean.getResults());
+                        page++;
+                        loading = true;
+                        dynamicResultList.addAll(bean.getResults());
+                        displayMovieList(dynamicResultList);
                     }else{
                         showError(getResources().getString(R.string.no_results));
                     }
@@ -159,7 +195,6 @@ public class PopularMoviesMainActivity extends BaseActivity{
     public void displayMovieList(List<Movie> movieBeanList) {
             MovieRecyclerViewAdapter newsListViewAdapter = new MovieRecyclerViewAdapter(
                     PopularMoviesMainActivity.this, movieBeanList);
-            rl_gridview.setVisibility(View.VISIBLE);
             showGrid();
             newsListViewAdapter.notifyDataSetChanged();
             lv_gridList.setItemAnimator(new FadeInAnimator());
@@ -170,17 +205,24 @@ public class PopularMoviesMainActivity extends BaseActivity{
 
     public void showProgress(){
         rl_progress.setVisibility(View.VISIBLE);
-        rl_gridview.setVisibility(View.GONE);
+        mSwipeRefreshLayout.setVisibility(View.GONE);
         rl_error.setVisibility(View.GONE);
+    }
+
+    public void showListProgress(){
+        rl_progress.setVisibility(View.GONE);
+        mSwipeRefreshLayout.setVisibility(View.GONE);
+        rl_error.setVisibility(View.GONE);
+        listProgressView.setVisibility(View.VISIBLE);
     }
     public void showGrid(){
         rl_progress.setVisibility(View.GONE);
-        rl_gridview.setVisibility(View.VISIBLE);
+        mSwipeRefreshLayout.setVisibility(View.VISIBLE);
         rl_error.setVisibility(View.GONE);
     }
     public void showError(String message){
         rl_progress.setVisibility(View.GONE);
-        rl_gridview.setVisibility(View.GONE);
+        mSwipeRefreshLayout.setVisibility(View.GONE);
         rl_error.setVisibility(View.VISIBLE);
         tv_errorMessage.setText(message);
 
@@ -234,12 +276,20 @@ public class PopularMoviesMainActivity extends BaseActivity{
         }
         @Override
         public boolean onMenuItemClick(MenuItem item) {
-            if (item.getItemId()==R.id.sort_by_popularity) {
+            if (!setSortByPopularityChecked && item.getItemId()==R.id.sort_by_popularity) {
                 setSortByPopularityChecked = true;
+                sort_by = Constants.POPULARITY;
+                page = 1;
+                dynamicResultList.clear();
+                executeRetrofittask();
                 return true;
             }
-            if (item.getItemId()==R.id.sort_by_voting){
+            if (setSortByPopularityChecked && item.getItemId()==R.id.sort_by_voting){
                 setSortByPopularityChecked = false;
+                sort_by = Constants.VOTE_AVERAGE;
+                page = 1;
+                dynamicResultList.clear();
+                executeRetrofittask();
                 return true;
             }
             return false;
