@@ -25,6 +25,8 @@
             android:name=".PopularMoviesMainActivity"
             android:label="@string/app_name_proj2"
             android:theme="@style/AppTheme"/>
+
+
     </application>
 
 </manifest>
