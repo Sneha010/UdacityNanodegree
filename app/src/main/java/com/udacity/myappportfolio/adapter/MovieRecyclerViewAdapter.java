@@ -3,6 +3,7 @@ package com.udacity.myappportfolio.adapter;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -18,7 +19,7 @@ import java.util.List;
 /**
  * Created by HP on 1/4/2016.
  */
-public class MovieRecyclerViewAdapter extends RecyclerView.Adapter<MovieRecyclerViewAdapter.MovieViewHolder> {
+public class MovieRecyclerViewAdapter extends RecyclerView.Adapter<MovieRecyclerViewAdapter.MovieViewHolder> implements RecyclerView.OnItemTouchListener{
 
     private List<Movie> movieList;
     private Context context;
@@ -54,7 +55,22 @@ public class MovieRecyclerViewAdapter extends RecyclerView.Adapter<MovieRecycler
         return new MovieViewHolder(itemView);
     }
 
-        public static class MovieViewHolder extends RecyclerView.ViewHolder {
+    @Override
+    public boolean onInterceptTouchEvent(RecyclerView rv, MotionEvent e) {
+        return false;
+    }
+
+    @Override
+    public void onTouchEvent(RecyclerView rv, MotionEvent e) {
+
+    }
+
+    @Override
+    public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {
+
+    }
+
+    public static class MovieViewHolder extends RecyclerView.ViewHolder {
 
         protected ImageView iv_movie_poster;
 

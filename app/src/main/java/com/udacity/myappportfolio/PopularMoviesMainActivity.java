@@ -1,6 +1,7 @@
 package com.udacity.myappportfolio;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.GridLayoutManager;
@@ -21,6 +22,8 @@ import com.udacity.myappportfolio.bean.Movie;
 import com.udacity.myappportfolio.bean.MovieMainBean;
 import com.udacity.myappportfolio.interfaces.MovieRestAPI;
 import com.udacity.myappportfolio.util.Constants;
+import com.udacity.myappportfolio.util.MyUtil;
+import com.udacity.myappportfolio.util.RecyclerItemClickListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -141,6 +144,18 @@ public class PopularMoviesMainActivity extends BaseActivity {
             }
         });
 
+        lv_gridList.addOnItemTouchListener(
+                new RecyclerItemClickListener(PopularMoviesMainActivity.this, new RecyclerItemClickListener.OnItemClickListener() {
+                    @Override public void onItemClick(View view, int position) {
+                        // TODO Handle item click
+                        if(MyUtil.notEmpty(dynamicResultList)){
+                            Intent i = new Intent(PopularMoviesMainActivity.this , MovieDetailActivity.class);
+                            i.putExtra("movieBean" , dynamicResultList.get(position));
+                            startActivity(i);
+                        }
+                    }
+                })
+        );
     }
 
     public void setUpGridListView(){
