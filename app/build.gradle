@@ -11,7 +11,7 @@ android {
         versionCode 1
         versionName "1.0"
     }
-  /*  dexOptions{
+    /*dexOptions{
 
         dexInProcess = true
     }*/
@@ -38,4 +38,6 @@ dependencies {
     compile 'com.squareup.picasso:picasso:2.5.2'
     compile 'jp.wasabeef:recyclerview-animators:1.2.0@aar'
     compile 'com.android.support:design:23.1.1'
+    compile 'com.android.support:palette-v7:23.1.1'
+
 }
