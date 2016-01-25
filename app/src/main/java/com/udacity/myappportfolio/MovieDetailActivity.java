@@ -72,15 +72,20 @@ public class MovieDetailActivity extends BaseActivity {
                         // TODO I can haz Palette?
                         Bitmap bitmap = ((BitmapDrawable) iv_movie_poster.getDrawable()).getBitmap(); // Ew!
                         Palette palette = PaletteTransformation.getPalette(bitmap);
-                        vibrant.setBackgroundColor(getDominantSwatch(palette).getRgb());
-                       /* if(palette!=null){
-                            vibrant.setBackgroundColor(palette.getVibrantSwatch().getRgb());
-                            vibrantDark.setBackgroundColor(palette.getDarkVibrantSwatch().getRgb());
-                            vibrantLight.setBackgroundColor(palette.getLightVibrantSwatch().getRgb());
-                            muted.setBackgroundColor(palette.getMutedSwatch().getRgb());
-                            mutedDark.setBackgroundColor(palette.getDarkMutedSwatch().getRgb());
-                            mutedLight.setBackgroundColor(palette.getLightMutedSwatch().getRgb());
-                        }*/
+                        if(palette!=null){
+                            if(palette.getVibrantSwatch()!=null)
+                                vibrant.setBackgroundColor(palette.getVibrantSwatch().getRgb());
+                            if(palette.getDarkVibrantSwatch()!=null)
+                                vibrantDark.setBackgroundColor(palette.getDarkVibrantSwatch().getRgb());
+                            if(palette.getLightVibrantSwatch()!=null)
+                                vibrantLight.setBackgroundColor(palette.getLightVibrantSwatch().getRgb());
+                            if(palette.getMutedSwatch()!=null)
+                                muted.setBackgroundColor(palette.getMutedSwatch().getRgb());
+                            if(palette.getDarkMutedSwatch()!=null)
+                                mutedDark.setBackgroundColor(palette.getDarkMutedSwatch().getRgb());
+                            if(palette.getLightMutedSwatch()!=null)
+                                mutedLight.setBackgroundColor(palette.getLightMutedSwatch().getRgb());
+                        }
                         /*
                         Its not necessary that Palette will always return VibrantSwatch. Check for null before calling getRgb()
                         Palette.Swatch vibrantSwatch = palette.getVibrantSwatch();
