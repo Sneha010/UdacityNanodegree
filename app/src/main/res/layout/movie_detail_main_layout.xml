@@ -51,96 +51,92 @@
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         >
-
-        <LinearLayout
-            android:layout_width="wrap_content"
+<RelativeLayout
+    android:id="@+id/rl_content"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
+        <RelativeLayout
+            android:id="@+id/rl_RatingBar"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
+           >
 
-            <TextView
+            <com.udacity.myappportfolio.util.TextViewGothamBook
+                android:id="@+id/tv_VoteCount"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Vibrant"/>
-            <View
-                android:id="@+id/vibrant"
-                android:layout_width="100dp"
-                android:layout_height="50dp"/>
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
+                android:text="2345 Votes"
+                android:textSize="@dimen/xsmall_text_size"
+                android:layout_toLeftOf="@+id/ratingBar"
+               android:layout_alignBottom="@+id/ratingBar"
+                android:textColor="@color/primaryTextColor"
+                />
 
-            <TextView
+            <RatingBar
+                android:id="@+id/ratingBar"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Vibrant dark"/>
-            <View
-                android:id="@+id/vibrantDark"
-                android:layout_width="100dp"
-                android:layout_height="50dp"/>
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
+                android:numStars="5"
+                android:rating="2"
+                android:layout_alignParentRight="true"
+                style="?android:attr/ratingBarStyleIndicator"
+                android:layout_margin="5dp"/>
+            </RelativeLayout>
 
-            <TextView
+        <RelativeLayout
+            android:id="@+id/rl_movieInfo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/rl_RatingBar">
+
+            <LinearLayout
+                android:id="@+id/ll_ReleaseDate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:weightSum="2"
+                android:orientation="horizontal"
+                android:padding="10dp">
+
+            <com.udacity.myappportfolio.util.TextViewGotham
+                android:id="@+id/tv_ReleaseDateLabel"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.8"
+                android:text="@string/release_date"
+                android:textSize="@dimen/large_text_size"
+                android:textColor="@color/primaryTextColor"/>
+                <com.udacity.myappportfolio.util.TextViewGothamBook
+                    android:id="@+id/tv_ReleaseDateValue"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.2"
+                    android:textSize="@dimen/xlarge_text_size"
+                    android:textColor="@color/primaryTextColor"/>
+            </LinearLayout>
+
+            <com.udacity.myappportfolio.util.TextViewGotham
+                android:id="@+id/tv_SynopsisLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Vibrant light"/>
-            <View
-                android:id="@+id/vibrantLight"
-                android:layout_width="100dp"
-                android:layout_height="50dp"/>
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
+                android:text="@string/synopsis"
+                android:textSize="@dimen/large_text_size"
+                android:textColor="@color/primaryTextColor"
+                android:layout_below="@id/ll_ReleaseDate"
+                android:layout_marginTop="15dp"
+                android:layout_marginLeft="10dp"/>
 
-            <TextView
+            <com.udacity.myappportfolio.util.TextViewGothamBook
+                android:id="@+id/tv_SynopsisValue"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Muted"/>
-            <View
-                android:id="@+id/muted"
-                android:layout_width="100dp"
-                android:layout_height="50dp"/>
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Muted dark"/>
-            <View
-                android:id="@+id/mutedDark"
-                android:layout_width="100dp"
-                android:layout_height="50dp"/>
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Muted light"/>
-            <View
-                android:id="@+id/mutedLight"
-                android:layout_width="100dp"
-                android:layout_height="50dp"/>
-        </LinearLayout>
-        </LinearLayout>
+                android:textSize="@dimen/large_text_size"
+                android:textColor="@color/secondaryTextColor"
+                android:layout_below="@id/tv_SynopsisLabel"
+                android:layout_margin="10dp"
+                />
+            </RelativeLayout>
+        </RelativeLayout>
 
     </android.support.v4.widget.NestedScrollView>
 

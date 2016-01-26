@@ -1,21 +1,23 @@
 package com.udacity.myappportfolio;
 
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.LayerDrawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.graphics.Palette;
-import android.view.View;
 import android.widget.ImageView;
+import android.widget.RatingBar;
+import android.widget.TextView;
 
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 import com.udacity.myappportfolio.bean.Movie;
 import com.udacity.myappportfolio.util.Constants;
+import com.udacity.myappportfolio.util.MyUtil;
 import com.udacity.myappportfolio.util.PaletteTransformation;
-
-import java.util.Collections;
-import java.util.Comparator;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -28,6 +30,18 @@ public class MovieDetailActivity extends BaseActivity {
     @Bind(R.id.iv_movie_poster)
     ImageView iv_movie_poster;
 
+    @Bind(R.id.ratingBar)
+    RatingBar ratingBar;
+
+    @Bind(R.id.tv_VoteCount)
+    TextView tv_VoteCount;
+
+    @Bind(R.id.tv_ReleaseDateValue)
+    TextView tv_ReleaseDateValue;
+
+    @Bind(R.id.tv_SynopsisValue)
+    TextView tv_SynopsisValue;
+
     Movie movie;
 
     @Override
@@ -38,31 +52,12 @@ public class MovieDetailActivity extends BaseActivity {
 
         if(getIntent()!=null){
             movie = getIntent().getParcelableExtra("movieBean");
-            prepareUI();
+            fillUI();
         }
     }
 
-    @Bind(R.id.vibrant)
-    View vibrant;
-    @Bind(R.id.vibrantDark)
-    View vibrantDark;
-    @Bind(R.id.vibrantLight)
-    View vibrantLight;
-    @Bind(R.id.muted)
-    View muted;
-    @Bind(R.id.mutedDark)
-    View mutedDark;
-    @Bind(R.id.mutedLight)
-    View mutedLight;
 
-    public void prepareUI(){
-
-       /* if (MyUtil.notEmpty(movie.getPoster_path())) {
-            Picasso.with(MovieDetailActivity.this)
-                    .load(Constants.IMAGE_POSTER_PATH_BASE_URL+movie.getPoster_path())
-                    .into(iv_movie_poster);
-        }*/
-
+    public void fillUI(){
 
         Picasso.with(MovieDetailActivity.this)
                 .load(Constants.IMAGE_POSTER_PATH_BASE_URL + movie.getPoster_path())
@@ -73,44 +68,46 @@ public class MovieDetailActivity extends BaseActivity {
                         Bitmap bitmap = ((BitmapDrawable) iv_movie_poster.getDrawable()).getBitmap(); // Ew!
                         Palette palette = PaletteTransformation.getPalette(bitmap);
                         if(palette!=null){
-                            if(palette.getVibrantSwatch()!=null)
-                                vibrant.setBackgroundColor(palette.getVibrantSwatch().getRgb());
-                            if(palette.getDarkVibrantSwatch()!=null)
-                                vibrantDark.setBackgroundColor(palette.getDarkVibrantSwatch().getRgb());
-                            if(palette.getLightVibrantSwatch()!=null)
-                                vibrantLight.setBackgroundColor(palette.getLightVibrantSwatch().getRgb());
-                            if(palette.getMutedSwatch()!=null)
-                                muted.setBackgroundColor(palette.getMutedSwatch().getRgb());
-                            if(palette.getDarkMutedSwatch()!=null)
-                                mutedDark.setBackgroundColor(palette.getDarkMutedSwatch().getRgb());
-                            if(palette.getLightMutedSwatch()!=null)
-                                mutedLight.setBackgroundColor(palette.getLightMutedSwatch().getRgb());
+
                         }
-                        /*
-                        Its not necessary that Palette will always return VibrantSwatch. Check for null before calling getRgb()
-                        Palette.Swatch vibrantSwatch = palette.getVibrantSwatch();
-                        if(vibrantSwatch != null) {
-                            //get rgb
-                        } else {
-                            //get another swatch
-                        }
-                        You can also get all swatches available from Palette using getSwatches().
-                        Then, to get most used color, pick the swatch having maximum pixel population.
-                         You can get pixel population by calling getPopulation() on swatches*/
 
                     }
                 });
 
 
+        LayerDrawable layerDrawable = (LayerDrawable) ratingBar.getProgressDrawable();
+        DrawableCompat.setTint(DrawableCompat.wrap(layerDrawable.getDrawable(0)), Color.LTGRAY);   // Empty star
+        //DrawableCompat.setTint(DrawableCompat.wrap(layerDrawable.getDrawable(1)), Color.BLUE); // Partial star
+        DrawableCompat.setTint(DrawableCompat.wrap(layerDrawable.getDrawable(2)), getResources().getColor(R.color.colorAccent));  // Full star
+
+        if(movie.getVote_count()!=0)
+        {
+            tv_VoteCount.setText(movie.getVote_count()+" Votes");
+        }
+
+        if(MyUtil.notEmpty(movie.getRelease_date())){
+            tv_ReleaseDateValue.setText(movie.getRelease_date());
+        }
+
+        if(MyUtil.notEmpty(movie.getOverview())){
+            tv_SynopsisValue.setText(movie.getOverview());
+        }
+
+        fillRatingStars();
+
     }
 
-    public static Palette.Swatch getDominantSwatch(Palette palette) {
-        // find most-represented swatch based on population
-        return Collections.max(palette.getSwatches(), new Comparator<Palette.Swatch>() {
-            @Override
-            public int compare(Palette.Swatch sw1, Palette.Swatch sw2) {
-                return Integer.compare(sw1.getPopulation(), sw2.getPopulation());
-            }
-        });
+    public void fillRatingStars(){
+
+        if(movie.getVote_average()!= 0.0){
+            double vote_avg = movie.getVote_average();
+            float final_rating = (float) vote_avg/2.0f;
+
+            ratingBar.setRating(final_rating);
+        }
+
+
     }
-}
+
+
+    }
