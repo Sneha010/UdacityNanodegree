@@ -36,6 +36,12 @@
                 app:layout_collapseMode="parallax"
                 />
 
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="120dp"
+                android:background="@drawable/trans_black_shaded_drawable"
+                android:layout_gravity="bottom"/>
+
             <android.support.v7.widget.Toolbar
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"

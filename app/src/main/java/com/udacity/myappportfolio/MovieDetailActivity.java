@@ -4,6 +4,7 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.LayerDrawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CollapsingToolbarLayout;
@@ -13,6 +14,8 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
@@ -83,7 +86,7 @@ public class MovieDetailActivity extends BaseActivity {
                         Bitmap bitmap = ((BitmapDrawable) iv_movie_poster.getDrawable()).getBitmap(); // Ew!
                         Palette palette = PaletteTransformation.getPalette(bitmap);
                         if(palette!=null){
-
+                            applyPallateToWindow(palette);
                         }
 
                     }
@@ -126,6 +129,40 @@ public class MovieDetailActivity extends BaseActivity {
             ratingBar.setRating(final_rating);
         }
 
+
+    }
+
+    //Apply toolbar status and navigation color from palatte
+    public void applyPallateToWindow(Palette palette){
+
+        int colorPrimary = getResources().getColor(R.color.colorPrimary);
+        int colorPrimaryDark = getResources().getColor(R.color.colorPrimaryDark);
+
+
+        if(palette.getDarkMutedSwatch()!=null){
+
+            colorPrimary = palette.getDarkMutedSwatch().getRgb();
+            colorPrimaryDark = colorPrimary;
+
+            float[] hsv = new float[3];
+            Color.colorToHSV(colorPrimaryDark, hsv);
+            hsv[2] *= 1.5f; // value component
+            colorPrimaryDark = Color.HSVToColor(hsv);
+        }
+
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
+
+            Window window = getWindow();
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+
+            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+            window.setStatusBarColor(colorPrimary);
+            window.setNavigationBarColor(colorPrimary);
+
+            collapsingToolbarLayout.setContentScrimColor(colorPrimaryDark);
+
+
+        }
 
     }
 
