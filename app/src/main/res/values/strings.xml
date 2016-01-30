@@ -22,6 +22,7 @@
     <string name="no_results">Sorry,No Results Found.</string>
     <string name="no_internet">No Internet Connectivity</string>
     <string name="server_error">Could not connect to server,\n Please try again later!</string>
+    <string name="not_available">Not Available</string>
 
     <!--Movie Info Part-->
     <string name="release_date">Release Date:</string>

@@ -6,8 +6,13 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.LayerDrawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.graphics.Palette;
+import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
@@ -26,6 +31,12 @@ import butterknife.ButterKnife;
  * Created by HP on 1/17/2016.
  */
 public class MovieDetailActivity extends BaseActivity {
+
+    @Bind(R.id.toolbar)
+    Toolbar toolbar;
+
+    @Bind(R.id.collapsingToolbar)
+    CollapsingToolbarLayout collapsingToolbarLayout;
 
     @Bind(R.id.iv_movie_poster)
     ImageView iv_movie_poster;
@@ -49,6 +60,10 @@ public class MovieDetailActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.movie_detail_main_layout);
         ButterKnife.bind(this);
+
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
 
         if(getIntent()!=null){
             movie = getIntent().getParcelableExtra("movieBean");
@@ -80,6 +95,11 @@ public class MovieDetailActivity extends BaseActivity {
         //DrawableCompat.setTint(DrawableCompat.wrap(layerDrawable.getDrawable(1)), Color.BLUE); // Partial star
         DrawableCompat.setTint(DrawableCompat.wrap(layerDrawable.getDrawable(2)), getResources().getColor(R.color.colorAccent));  // Full star
 
+        if(MyUtil.notEmpty(movie.getOriginal_title())){
+            collapsingToolbarLayout.setTitle(movie.getOriginal_title());
+        }else
+            collapsingToolbarLayout.setTitle(getResources().getString(R.string.not_available));
+
         if(movie.getVote_count()!=0)
         {
             tv_VoteCount.setText(movie.getVote_count()+" Votes");
@@ -109,5 +129,30 @@ public class MovieDetailActivity extends BaseActivity {
 
     }
 
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.main, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+
+        return super.onPrepareOptionsMenu(menu);
 
     }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        try {
+            finish();
+
+        } catch (Exception e) {
+        }
+        return true;
+    }
+
+
+
+}

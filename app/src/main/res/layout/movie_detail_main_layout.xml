@@ -9,7 +9,7 @@
     >
 
     <android.support.design.widget.AppBarLayout
-        android:id="@+id/main.appbar"
+        android:id="@+id/appbarLayout"
         android:layout_width="match_parent"
         android:layout_height="300dp"
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
@@ -17,7 +17,7 @@
         >
 
         <android.support.design.widget.CollapsingToolbarLayout
-            android:id="@+id/main.collapsing"
+            android:id="@+id/collapsingToolbar"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:layout_scrollFlags="scroll|exitUntilCollapsed"
@@ -37,7 +37,7 @@
                 />
 
             <android.support.v7.widget.Toolbar
-                android:id="@+id/main.toolbar"
+                android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
@@ -111,7 +111,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1.2"
-                    android:textSize="@dimen/xlarge_text_size"
+                    android:textSize="@dimen/large_text_size"
                     android:textColor="@color/primaryTextColor"/>
             </LinearLayout>
 
@@ -133,6 +133,7 @@
                 android:textSize="@dimen/large_text_size"
                 android:textColor="@color/secondaryTextColor"
                 android:layout_below="@id/tv_SynopsisLabel"
+                android:lineSpacingExtra="3dp"
                 android:layout_margin="10dp"
                 />
             </RelativeLayout>
