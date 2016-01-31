@@ -80,5 +80,10 @@ public class MovieRecyclerViewAdapter extends RecyclerView.Adapter<MovieRecycler
         }
     }
 
+    public void updateMovieList(List<Movie> newMovieList){
+        this.movieList.addAll(newMovieList);
+        notifyDataSetChanged();
+    }
+
 
 }

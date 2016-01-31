@@ -2,6 +2,7 @@ package com.udacity.myappportfolio;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.GridLayoutManager;
@@ -75,6 +76,7 @@ public class PopularMoviesMainActivity extends BaseActivity {
     private String sort_by = Constants.POPULARITY;
     private int page = 1;
     private ArrayList<Movie> dynamicResultList = new ArrayList<>();
+    MovieRecyclerViewAdapter newsListViewAdapter;
 
 
     @Override
@@ -159,6 +161,7 @@ public class PopularMoviesMainActivity extends BaseActivity {
     }
 
     public void setUpGridListView(){
+        lv_gridList.setHasFixedSize(true);
         mLayoutManager = new GridLayoutManager(PopularMoviesMainActivity.this , 2);
         mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         lv_gridList.setLayoutManager(mLayoutManager);
@@ -194,7 +197,7 @@ public class PopularMoviesMainActivity extends BaseActivity {
                         page++;
                         loading = true;
                         dynamicResultList.addAll(bean.getResults());
-                        displayMovieList(dynamicResultList);
+                        displayMovieList(bean.getResults());
                     }else{
                         showError(getResources().getString(R.string.no_results));
                     }
@@ -214,10 +217,14 @@ public class PopularMoviesMainActivity extends BaseActivity {
 
 
     public void displayMovieList(List<Movie> movieBeanList) {
-            MovieRecyclerViewAdapter newsListViewAdapter = new MovieRecyclerViewAdapter(
-                    PopularMoviesMainActivity.this, movieBeanList);
+            if(page==2){
+                newsListViewAdapter = new MovieRecyclerViewAdapter(
+                        PopularMoviesMainActivity.this, movieBeanList);
+            }else{
+                newsListViewAdapter.updateMovieList(movieBeanList);
+            }
+
             showGrid();
-            newsListViewAdapter.notifyDataSetChanged();
             lv_gridList.setItemAnimator(new FadeInAnimator());
             AlphaInAnimationAdapter alphaAdapter = new AlphaInAnimationAdapter(newsListViewAdapter);
             ScaleInAnimationAdapter scaleAdapter = new ScaleInAnimationAdapter(alphaAdapter);
@@ -233,7 +240,7 @@ public class PopularMoviesMainActivity extends BaseActivity {
 
     public void showListProgress(){
         rl_progress.setVisibility(View.GONE);
-        rl_gridView.setVisibility(View.GONE);
+        rl_gridView.setVisibility(View.VISIBLE);
         rl_error.setVisibility(View.GONE);
         listProgressView.setVisibility(View.VISIBLE);
     }
@@ -318,5 +325,13 @@ public class PopularMoviesMainActivity extends BaseActivity {
             }
             return false;
         }
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        mLayoutManager.setSpanCount(newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE ? 3 : 2);
+
+
     }
 }
