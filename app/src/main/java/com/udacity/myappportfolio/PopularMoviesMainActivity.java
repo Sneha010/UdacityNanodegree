@@ -220,15 +220,16 @@ public class PopularMoviesMainActivity extends BaseActivity {
             if(page==2){
                 newsListViewAdapter = new MovieRecyclerViewAdapter(
                         PopularMoviesMainActivity.this, movieBeanList);
+                lv_gridList.setItemAnimator(new FadeInAnimator());
+                AlphaInAnimationAdapter alphaAdapter = new AlphaInAnimationAdapter(newsListViewAdapter);
+                ScaleInAnimationAdapter scaleAdapter = new ScaleInAnimationAdapter(alphaAdapter);
+                lv_gridList.setAdapter(scaleAdapter);
             }else{
                 newsListViewAdapter.updateMovieList(movieBeanList);
             }
 
             showGrid();
-            lv_gridList.setItemAnimator(new FadeInAnimator());
-            AlphaInAnimationAdapter alphaAdapter = new AlphaInAnimationAdapter(newsListViewAdapter);
-            ScaleInAnimationAdapter scaleAdapter = new ScaleInAnimationAdapter(alphaAdapter);
-            lv_gridList.setAdapter(scaleAdapter);
+
     }
 
     public void showProgress(){

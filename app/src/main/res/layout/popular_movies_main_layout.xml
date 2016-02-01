@@ -30,14 +30,14 @@
                 />
 
             <com.rey.material.widget.ProgressView
-                android:id="@+id/progress_pv_circular_colors"
+                android:id="@id/progress_pv_circular_colors"
                 android:layout_width="20dp"
                 android:layout_height="20dp"
                android:layout_centerHorizontal="true"
+                android:layout_alignParentBottom="true"
                 app:pv_autostart="true"
                 app:pv_circular="true"
                 app:pv_progressMode="indeterminate"
-                android:layout_below="@id/list"
                 android:layout_margin="5dp"
                 app:pv_progressStyle="@style/ColorsCircularProgressDrawableStyle"
                 android:visibility="gone"/>
