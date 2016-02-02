@@ -6,7 +6,17 @@
     card_view:cardCornerRadius="5dp"
     card_view:cardElevation="2dp"
     android:layout_margin="2.5dp"
+    android:layout_gravity="center"
     >
+    <ImageView
+        android:id="@+id/iv_movie_placeholder"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:src="@drawable/movie_grid_plpaceholder"
+        android:layout_gravity="center"
+        android:contentDescription="@string/app_name_proj2"
+        android:scaleType="centerCrop"
+        />
     <ImageButton
         android:id="@+id/iv_movie_poster"
         android:layout_width="match_parent"

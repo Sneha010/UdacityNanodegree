@@ -3,6 +3,7 @@ package com.udacity.myappportfolio;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.LayerDrawable;
 import android.os.Build;
 import android.os.Bundle;
@@ -18,6 +19,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.RatingBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.squareup.picasso.Callback;
@@ -47,6 +49,9 @@ public class MovieDetailActivity extends BaseActivity {
     @Bind(R.id.ratingBar)
     RatingBar ratingBar;
 
+    @Bind(R.id.rl_RatingBar)
+    RelativeLayout rl_RatingBar;
+
     @Bind(R.id.tv_VoteCount)
     TextView tv_VoteCount;
 
@@ -55,6 +60,9 @@ public class MovieDetailActivity extends BaseActivity {
 
     @Bind(R.id.tv_SynopsisValue)
     TextView tv_SynopsisValue;
+
+    @Bind(R.id.tv_movieTitle)
+    TextView tv_movieTitle;
 
     Movie movie;
 
@@ -79,6 +87,7 @@ public class MovieDetailActivity extends BaseActivity {
 
         Picasso.with(MovieDetailActivity.this)
                 .load(Constants.IMAGE_POSTER_PATH_BASE_URL + movie.getPoster_path())
+                .placeholder(R.drawable.movie_grid_plpaceholder)
                 .transform(new PaletteTransformation())
                 .into(iv_movie_poster, new Callback.EmptyCallback() {
                     @Override public void onSuccess() {
@@ -102,6 +111,11 @@ public class MovieDetailActivity extends BaseActivity {
             collapsingToolbarLayout.setTitle(movie.getOriginal_title());
         }else
             collapsingToolbarLayout.setTitle(getResources().getString(R.string.not_available));
+
+        if(MyUtil.notEmpty(movie.getOriginal_title())){
+            tv_movieTitle.setText(movie.getOriginal_title());
+        }else
+            tv_movieTitle.setText(getResources().getString(R.string.not_available));
 
         if(movie.getVote_count()!=0)
         {
@@ -132,6 +146,18 @@ public class MovieDetailActivity extends BaseActivity {
 
     }
 
+    public void setGradientView(int colorCode ){
+
+        int colors[] = { colorCode ,Color.parseColor("#FFFFFF"), Color.parseColor("#FFFFFF")};
+
+        GradientDrawable gradientDrawable = new GradientDrawable(
+                GradientDrawable.Orientation.LEFT_RIGHT, colors);
+
+        rl_RatingBar.setBackgroundDrawable(gradientDrawable);
+
+
+    }
+
     //Apply toolbar status and navigation color from palatte
     public void applyPallateToWindow(Palette palette){
 
@@ -148,7 +174,10 @@ public class MovieDetailActivity extends BaseActivity {
             Color.colorToHSV(colorPrimaryDark, hsv);
             hsv[2] *= 1.5f; // value component
             colorPrimaryDark = Color.HSVToColor(hsv);
+
+            setGradientView(colorPrimary);
         }
+
 
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
 
@@ -189,7 +218,6 @@ public class MovieDetailActivity extends BaseActivity {
         }
         return true;
     }
-
 
 
 }

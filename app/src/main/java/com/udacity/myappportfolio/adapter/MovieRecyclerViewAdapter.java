@@ -40,7 +40,8 @@ public class MovieRecyclerViewAdapter extends RecyclerView.Adapter<MovieRecycler
 
         if (bean != null) {
             if (MyUtil.notEmpty(bean.getPoster_path())) {
-                Picasso.with(context).load(Constants.IMAGE_POSTER_PATH_BASE_URL+bean.getPoster_path()).into(movieViewHolder.iv_movie_poster);
+                Picasso.with(context)
+                        .load(Constants.IMAGE_POSTER_PATH_BASE_URL+bean.getPoster_path()).into(movieViewHolder.iv_movie_poster);
             }
 
         }

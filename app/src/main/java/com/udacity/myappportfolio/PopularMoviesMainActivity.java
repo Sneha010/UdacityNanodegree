@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.PopupMenu;
@@ -26,11 +27,13 @@ import com.udacity.myappportfolio.util.Constants;
 import com.udacity.myappportfolio.util.MyUtil;
 import com.udacity.myappportfolio.util.RecyclerItemClickListener;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import jp.wasabeef.recyclerview.animators.FadeInAnimator;
 import jp.wasabeef.recyclerview.animators.adapters.AlphaInAnimationAdapter;
 import jp.wasabeef.recyclerview.animators.adapters.ScaleInAnimationAdapter;
@@ -103,16 +106,14 @@ public class PopularMoviesMainActivity extends BaseActivity {
 
     }
 
-    public void setUpListeners(){
+    @OnClick(R.id.rl_error)
+    public void fetchMovieAgain(){
+        dynamicResultList.clear();
+        page = 1;
+        executeRetrofittask();
+    }
 
-        rl_error.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                dynamicResultList.clear();
-                page = 1;
-                executeRetrofittask();
-            }
-        });
+    public void setUpListeners(){
 
         lv_gridList.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
@@ -210,7 +211,10 @@ public class PopularMoviesMainActivity extends BaseActivity {
 
             @Override
             public void onFailure(Throwable t) {
-                showError(getResources().getString(R.string.server_error));
+                if(t instanceof IOException)
+                    showError(getResources().getString(R.string.no_internet));
+                else
+                    showError(getResources().getString(R.string.server_error));
             }
         });
     }
@@ -252,11 +256,26 @@ public class PopularMoviesMainActivity extends BaseActivity {
         listProgressView.setVisibility(View.GONE);
     }
     public void showError(String message){
+        loading = true;
+
+
         rl_progress.setVisibility(View.GONE);
-        rl_gridView.setVisibility(View.GONE);
         listProgressView.setVisibility(View.GONE);
-        rl_error.setVisibility(View.VISIBLE);
-        tv_errorMessage.setText(message);
+
+        if(dynamicResultList!=null && dynamicResultList.size()>0){
+
+            Snackbar snackbar = Snackbar
+                    .make(rl_gridView, message, Snackbar.LENGTH_LONG);
+
+            snackbar.show();
+
+
+        }else{
+            rl_gridView.setVisibility(View.GONE);
+            rl_error.setVisibility(View.VISIBLE);
+            tv_errorMessage.setText(message);
+        }
+
 
     }
     @Override
