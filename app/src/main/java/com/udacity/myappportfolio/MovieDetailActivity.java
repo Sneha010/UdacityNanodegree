@@ -76,25 +76,26 @@ public class MovieDetailActivity extends BaseActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
 
-        if(getIntent()!=null){
+        if (getIntent() != null) {
             movie = getIntent().getParcelableExtra("movieBean");
             fillUI();
         }
     }
 
 
-    public void fillUI(){
+    private void fillUI() {
 
         Picasso.with(MovieDetailActivity.this)
                 .load(Constants.IMAGE_POSTER_PATH_BASE_URL + movie.getPoster_path())
                 .placeholder(R.drawable.movie_grid_plpaceholder)
                 .transform(new PaletteTransformation())
                 .into(iv_movie_poster, new Callback.EmptyCallback() {
-                    @Override public void onSuccess() {
+                    @Override
+                    public void onSuccess() {
                         // TODO I can haz Palette?
                         Bitmap bitmap = ((BitmapDrawable) iv_movie_poster.getDrawable()).getBitmap(); // Ew!
                         Palette palette = PaletteTransformation.getPalette(bitmap);
-                        if(palette!=null){
+                        if (palette != null) {
                             applyPallateToWindow(palette);
                         }
 
@@ -107,26 +108,25 @@ public class MovieDetailActivity extends BaseActivity {
         //DrawableCompat.setTint(DrawableCompat.wrap(layerDrawable.getDrawable(1)), Color.BLUE); // Partial star
         DrawableCompat.setTint(DrawableCompat.wrap(layerDrawable.getDrawable(2)), getResources().getColor(R.color.colorAccent));  // Full star
 
-        if(MyUtil.notEmpty(movie.getOriginal_title())){
+        if (MyUtil.notEmpty(movie.getOriginal_title())) {
             collapsingToolbarLayout.setTitle(movie.getOriginal_title());
-        }else
+        } else
             collapsingToolbarLayout.setTitle(getResources().getString(R.string.not_available));
 
-        if(MyUtil.notEmpty(movie.getOriginal_title())){
+        if (MyUtil.notEmpty(movie.getOriginal_title())) {
             tv_movieTitle.setText(movie.getOriginal_title());
-        }else
+        } else
             tv_movieTitle.setText(getResources().getString(R.string.not_available));
 
-        if(movie.getVote_count()!=0)
-        {
-            tv_VoteCount.setText(movie.getVote_count()+" Votes");
+        if (movie.getVote_count() != 0) {
+            tv_VoteCount.setText(movie.getVote_count() + " Votes");
         }
 
-        if(MyUtil.notEmpty(movie.getRelease_date())){
+        if (MyUtil.notEmpty(movie.getRelease_date())) {
             tv_ReleaseDateValue.setText(movie.getRelease_date());
         }
 
-        if(MyUtil.notEmpty(movie.getOverview())){
+        if (MyUtil.notEmpty(movie.getOverview())) {
             tv_SynopsisValue.setText(movie.getOverview());
         }
 
@@ -134,11 +134,11 @@ public class MovieDetailActivity extends BaseActivity {
 
     }
 
-    public void fillRatingStars(){
+    private void fillRatingStars() {
 
-        if(movie.getVote_average()!= 0.0){
+        if (movie.getVote_average() != 0.0) {
             double vote_avg = movie.getVote_average();
-            float final_rating = (float) vote_avg/2.0f;
+            float final_rating = (float) vote_avg / 2.0f;
 
             ratingBar.setRating(final_rating);
         }
@@ -146,9 +146,9 @@ public class MovieDetailActivity extends BaseActivity {
 
     }
 
-    public void setGradientView(int colorCode ){
+    private void setGradientView(int colorCode) {
 
-        int colors[] = { colorCode ,Color.parseColor("#FFFFFF"), Color.parseColor("#FFFFFF")};
+        int colors[] = {colorCode, Color.parseColor("#FFFFFF"), Color.parseColor("#FFFFFF")};
 
         GradientDrawable gradientDrawable = new GradientDrawable(
                 GradientDrawable.Orientation.LEFT_RIGHT, colors);
@@ -159,47 +159,51 @@ public class MovieDetailActivity extends BaseActivity {
     }
 
     //Apply toolbar status and navigation color from palatte
-    public void applyPallateToWindow(Palette palette){
+    private void applyPallateToWindow(Palette palette) {
 
+
+        //Default colors for window
         int colorPrimary = getResources().getColor(R.color.colorPrimary);
         int colorPrimaryDark = getResources().getColor(R.color.colorPrimaryDark);
 
 
-        if(palette.getDarkMutedSwatch()!=null){
+        if (palette.getDarkMutedSwatch() != null) {
 
-            colorPrimary = palette.getDarkMutedSwatch().getRgb();
-            colorPrimaryDark = colorPrimary;
+            colorPrimaryDark = palette.getDarkMutedSwatch().getRgb();
+            colorPrimary = colorPrimaryDark;
 
             float[] hsv = new float[3];
             Color.colorToHSV(colorPrimaryDark, hsv);
-            hsv[2] *= 1.5f; // value component
-            colorPrimaryDark = Color.HSVToColor(hsv);
+            hsv[2] *= 1.5f;
+            colorPrimary = Color.HSVToColor(hsv);
 
-            setGradientView(colorPrimary);
+            setGradientView(colorPrimaryDark);
         }
 
 
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
 
             Window window = getWindow();
             window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
 
             window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-            window.setStatusBarColor(colorPrimary);
-            window.setNavigationBarColor(colorPrimary);
+            window.setStatusBarColor(colorPrimaryDark);
+            window.setNavigationBarColor(colorPrimaryDark);
 
-            collapsingToolbarLayout.setContentScrimColor(colorPrimaryDark);
+            collapsingToolbarLayout.setContentScrimColor(colorPrimary);
 
 
         }
 
     }
 
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.main, menu);
         return super.onCreateOptionsMenu(menu);
     }
+
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
@@ -208,14 +212,12 @@ public class MovieDetailActivity extends BaseActivity {
 
     }
 
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
-        try {
-            finish();
+        finish();
 
-        } catch (Exception e) {
-        }
         return true;
     }
 

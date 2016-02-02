@@ -1,4 +1,4 @@
-package com.udacity.myappportfolio.interfaces;
+package com.udacity.myappportfolio.net;
 
 import com.udacity.myappportfolio.bean.MovieMainBean;
 

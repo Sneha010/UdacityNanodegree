@@ -9,7 +9,7 @@ import android.view.Window;
 /**
  * Created by 587823 on 12/24/2015.
  */
-public class SplashActivity extends Activity{
+public class SplashActivity extends Activity {
 
     protected int splashTime = 2000;
 

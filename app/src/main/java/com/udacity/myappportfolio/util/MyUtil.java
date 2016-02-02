@@ -1,6 +1,7 @@
 package com.udacity.myappportfolio.util;
 
 import android.content.Context;
+import android.support.design.widget.Snackbar;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.TextView;
@@ -28,6 +29,14 @@ public class MyUtil {
         toastMessage.setGravity(Gravity.CENTER);
         toastView.setBackground(context.getResources().getDrawable(R.drawable.toast_bg));
         toast.show();
+    }
+
+    public static void showSnackbar(View view ,String message){
+
+        Snackbar snackbar = Snackbar
+                .make(view, message, Snackbar.LENGTH_LONG);
+
+        snackbar.show();
     }
 
     public static boolean notEmpty(Object obj) {
