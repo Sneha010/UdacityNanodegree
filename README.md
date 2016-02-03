@@ -42,6 +42,6 @@ URL : https://www.themoviedb.org/account/signup
 [RETROFIT]: <http://square.github.io/retrofit/>
 [Google GSON]: <https://github.com/google/gson>
 [MOVIE DB API]: <https://www.themoviedb.org/>
-[Picasso] : <http://square.github.io/picasso>
-[Butterknife] : <http://jakewharton.github.io/butterknife/>
+[Picasso]: <http://square.github.io/picasso>
+[Butterknife]: <http://jakewharton.github.io/butterknife/>
 
