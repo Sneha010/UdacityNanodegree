@@ -2,6 +2,10 @@
 
 App allows users to discover the most popular movies playing and sort them by popularity and rating with the complete blend of android.
 
+#### ScreenShots
+
+![Movie List](/screenshots/landing.png?raw=true "Movie List")
+![Movie Details](/screenshots/movie_detail.png?raw=true "Movie Details")
 
 #### Tech
 
