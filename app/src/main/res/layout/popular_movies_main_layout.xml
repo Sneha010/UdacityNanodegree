@@ -1,6 +1,72 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
+
+    <include
+        android:id="@+id/toolbar" layout="@layout/toolbar"/>
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:layout_below="@id/toolbar">
+
+
+
+            <RelativeLayout
+                android:id="@+id/rl_gridView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:padding="2.5dp">
+
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/list"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                />
+
+            <com.rey.material.widget.ProgressView
+                android:id="@id/progress_pv_circular_colors"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+               android:layout_centerHorizontal="true"
+                android:layout_alignParentBottom="true"
+                app:pv_autostart="true"
+                app:pv_circular="true"
+                app:pv_progressMode="indeterminate"
+                android:layout_margin="5dp"
+                app:pv_progressStyle="@style/ColorsCircularProgressDrawableStyle"
+                android:visibility="gone"/>
+            </RelativeLayout>
+
+
+        <RelativeLayout
+            android:id="@+id/rl_progress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:visibility="gone">
+
+            <include layout="@layout/loading_layout" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/rl_error"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:visibility="gone">
+
+            <include layout="@layout/error_layout" />
+        </RelativeLayout>
+
+    </RelativeLayout>
+
+
+
 
 </RelativeLayout>
