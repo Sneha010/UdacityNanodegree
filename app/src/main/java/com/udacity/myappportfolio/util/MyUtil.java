@@ -1,12 +1,16 @@
 package com.udacity.myappportfolio.util;
 
 import android.content.Context;
+import android.support.design.widget.Snackbar;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.udacity.myappportfolio.R;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by HP on 12/24/2015.
@@ -25,5 +29,34 @@ public class MyUtil {
         toastMessage.setGravity(Gravity.CENTER);
         toastView.setBackground(context.getResources().getDrawable(R.drawable.toast_bg));
         toast.show();
+    }
+
+    public static void showSnackbar(View view ,String message){
+
+        Snackbar snackbar = Snackbar
+                .make(view, message, Snackbar.LENGTH_LONG);
+
+        snackbar.show();
+    }
+
+    public static boolean notEmpty(Object obj) {
+        boolean result = true;
+        if (obj != null) {
+            if (obj instanceof String) {
+
+                if (obj.toString().trim().length() != 0
+                        && !obj.toString().trim().equalsIgnoreCase("null"))
+                    result = false;
+            } else if (obj instanceof List) {
+                if (((List) obj).size() > 0)
+                    result = false;
+            } else if (obj instanceof Map) {
+                if (((Map) obj).size() > 0)
+                    result = false;
+            }
+        }
+
+        return !result;
+
     }
 }

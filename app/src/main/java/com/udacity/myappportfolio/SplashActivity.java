@@ -9,9 +9,9 @@ import android.view.Window;
 /**
  * Created by 587823 on 12/24/2015.
  */
-public class SplashActivity extends Activity{
+public class SplashActivity extends Activity {
 
-    protected int splashTime = 2000;
+    private static final int SPLASHTIME = 2000;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -21,14 +21,14 @@ public class SplashActivity extends Activity{
 
         new Handler().postDelayed(new Runnable() {
             public void run() {
-                Intent intent = new Intent(SplashActivity.this, MainActivity.class);
+                Intent intent = new Intent(SplashActivity.this, PopularMoviesMainActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 startActivity(intent);
                 finish();
             }
 
-        }, splashTime);
+        }, SPLASHTIME);
 
 
     }

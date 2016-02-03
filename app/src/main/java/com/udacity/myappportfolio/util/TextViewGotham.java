@@ -33,10 +33,9 @@ public class TextViewGotham extends TextView {
 		}
 	}
 
-	public  Typeface getDefaultTypeface() {
+	private Typeface getDefaultTypeface() {
 		if (defaultTypeface == null)
-			defaultTypeface = Typeface.createFromAsset(
-					getContext().getAssets(), "gothamblack.ttf");
+			defaultTypeface =FontCache.getTypeface(getContext(), "fonts/gothamblack.ttf");
 		return defaultTypeface;
 	}
 }
