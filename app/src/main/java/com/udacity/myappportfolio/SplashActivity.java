@@ -11,7 +11,7 @@ import android.view.Window;
  */
 public class SplashActivity extends Activity {
 
-    protected int splashTime = 2000;
+    private static final int SPLASHTIME = 2000;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -28,7 +28,7 @@ public class SplashActivity extends Activity {
                 finish();
             }
 
-        }, splashTime);
+        }, SPLASHTIME);
 
 
     }

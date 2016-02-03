@@ -7,7 +7,7 @@ import butterknife.ButterKnife;
 /**
  * Created by HP on 1/3/2016.
  */
-public class BaseActivity extends AppCompatActivity{
+public abstract class BaseActivity extends AppCompatActivity{
 
     @Override
     protected void onDestroy() {

@@ -96,7 +96,7 @@ public class MovieDetailActivity extends BaseActivity {
                         Bitmap bitmap = ((BitmapDrawable) iv_movie_poster.getDrawable()).getBitmap(); // Ew!
                         Palette palette = PaletteTransformation.getPalette(bitmap);
                         if (palette != null) {
-                            applyPallateToWindow(palette);
+                            applyPalleteToWindow(palette);
                         }
 
                     }
@@ -159,7 +159,7 @@ public class MovieDetailActivity extends BaseActivity {
     }
 
     //Apply toolbar status and navigation color from palatte
-    private void applyPallateToWindow(Palette palette) {
+    private void applyPalleteToWindow(Palette palette) {
 
 
         //Default colors for window
