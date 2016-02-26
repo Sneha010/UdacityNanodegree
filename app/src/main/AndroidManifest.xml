@@ -26,6 +26,12 @@
             android:label="@string/app_name_proj2"
             android:theme="@style/AppTheme"
             android:configChanges="keyboardHidden|orientation|screenSize"/>
+        <activity
+            android:name=".activity.PopularMoviesMainActivityNew"
+            android:label="@string/app_name_proj2"
+            android:theme="@style/AppTheme"
+            android:configChanges="keyboardHidden|orientation|screenSize"/>
+
 
         <activity
             android:name=".MovieDetailActivity"

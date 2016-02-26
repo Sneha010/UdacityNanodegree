@@ -1,4 +1,4 @@
-package com.udacity.myappportfolio;
+package com.udacity.myappportfolio.activity;
 
 import android.content.Context;
 import android.content.Intent;
@@ -18,15 +18,19 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.rey.material.widget.ProgressView;
+import com.udacity.myappportfolio.BaseActivity;
+import com.udacity.myappportfolio.MovieDetailActivity;
+import com.udacity.myappportfolio.R;
 import com.udacity.myappportfolio.adapter.MovieRecyclerViewAdapter;
 import com.udacity.myappportfolio.model.Movie;
 import com.udacity.myappportfolio.model.MovieMainBean;
-import com.udacity.myappportfolio.net.MovieDBResponseListener;
 import com.udacity.myappportfolio.net.MovieRestAPI;
-import com.udacity.myappportfolio.net.TheMovieDBClient;
+import com.udacity.myappportfolio.presenter.PopularMoviePresenter;
+import com.udacity.myappportfolio.presenter.PopularMoviePresenterImpl;
 import com.udacity.myappportfolio.util.Constants;
 import com.udacity.myappportfolio.util.MyUtil;
 import com.udacity.myappportfolio.util.RecyclerItemClickListener;
+import com.udacity.myappportfolio.view.MovieMainView;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -42,7 +46,7 @@ import jp.wasabeef.recyclerview.animators.adapters.ScaleInAnimationAdapter;
 /**
  * Created by 587823 on 1/1/2016.
  */
-public class PopularMoviesMainActivity extends BaseActivity implements MovieDBResponseListener {
+public class PopularMoviesMainActivityNew extends BaseActivity implements MovieMainView {
 
     @Bind(R.id.toolbar)
     Toolbar toolbar;
@@ -71,12 +75,13 @@ public class PopularMoviesMainActivity extends BaseActivity implements MovieDBRe
     private int pastVisiblesItems, visibleItemCount, totalItemCount;
     private GridLayoutManager mLayoutManager;
     private MovieRestAPI myService;
-    private String sort_by = Constants.POPULARITY;
-    private int page = 1;
-    private ArrayList<Movie> dynamicResultList = new ArrayList<>();
+    private String sortBy = Constants.POPULARITY;
+    private int pageNo = 1;
+    private List<Movie> dynamicResultList = new ArrayList<>();
     private MovieRecyclerViewAdapter newsListViewAdapter;
-    private TheMovieDBClient client;
 
+
+    private PopularMoviePresenter presenter;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -84,9 +89,9 @@ public class PopularMoviesMainActivity extends BaseActivity implements MovieDBRe
         setContentView(R.layout.popular_movies_main_layout);
         ButterKnife.bind(this);
 
-        prepareUI();
+        presenter = new PopularMoviePresenterImpl(this);
 
-        loadMovieList();
+        prepareUI();
     }
 
 
@@ -96,14 +101,16 @@ public class PopularMoviesMainActivity extends BaseActivity implements MovieDBRe
         setUpGridListView();
         setUpListeners();
 
+        presenter.loadMovieList(getPageNo() , getSortBy());
+
     }
 
     @SuppressWarnings("unused")
     @OnClick(R.id.rl_error)
     public void fetchMovieAgain() {
-        dynamicResultList.clear();
-        page = 1;
-        loadMovieList();
+        setPageNo(1);
+        clearMovieList();
+        presenter.loadMovieList(getPageNo() , getSortBy());
     }
 
 
@@ -131,7 +138,7 @@ public class PopularMoviesMainActivity extends BaseActivity implements MovieDBRe
                         if ((visibleItemCount + pastVisiblesItems) >= totalItemCount) {
                             loading = false;
                             //Do pagination.. i.e. fetch new data
-                            loadMovieList();
+                            presenter.loadMovieList(getPageNo() , getSortBy());
                         }
                     }
                 }
@@ -140,12 +147,12 @@ public class PopularMoviesMainActivity extends BaseActivity implements MovieDBRe
         });
 
         lv_gridList.addOnItemTouchListener(
-                new RecyclerItemClickListener(PopularMoviesMainActivity.this, new RecyclerItemClickListener.OnItemClickListener() {
+                new RecyclerItemClickListener(PopularMoviesMainActivityNew.this, new RecyclerItemClickListener.OnItemClickListener() {
                     @Override
                     public void onItemClick(View view, int position) {
                         // TODO Handle item click
                         if (MyUtil.notEmpty(dynamicResultList)) {
-                            Intent i = new Intent(PopularMoviesMainActivity.this, MovieDetailActivity.class);
+                            Intent i = new Intent(PopularMoviesMainActivityNew.this, MovieDetailActivity.class);
                             i.putExtra("movieBean", dynamicResultList.get(position));
                             startActivity(i);
                         }
@@ -156,30 +163,18 @@ public class PopularMoviesMainActivity extends BaseActivity implements MovieDBRe
 
     private void setUpGridListView() {
         lv_gridList.setHasFixedSize(true);
-        mLayoutManager = new GridLayoutManager(PopularMoviesMainActivity.this, 2);
+        mLayoutManager = new GridLayoutManager(PopularMoviesMainActivityNew.this, 2);
         mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         lv_gridList.setLayoutManager(mLayoutManager);
     }
 
 
-    private void loadMovieList() {
-        if (dynamicResultList.size() > 0) {
-            showListProgress();
-        } else {
-            showProgress();
-        }
-
-        client = TheMovieDBClient.getInstance();
-
-        client.loadMovies(page,sort_by , this);
-
-    }
 
 
-    private void displayMovieList(List<Movie> movieBeanList) {
-        if (page == 2) {
+    public void displayMovieList(List<Movie> movieBeanList) {
+        if (getPageNo() == 2) {
             newsListViewAdapter = new MovieRecyclerViewAdapter(
-                    PopularMoviesMainActivity.this, movieBeanList);
+                    PopularMoviesMainActivityNew.this, movieBeanList);
             lv_gridList.setItemAnimator(new FadeInAnimator());
             AlphaInAnimationAdapter alphaAdapter = new AlphaInAnimationAdapter(newsListViewAdapter);
             ScaleInAnimationAdapter scaleAdapter = new ScaleInAnimationAdapter(alphaAdapter);
@@ -187,33 +182,38 @@ public class PopularMoviesMainActivity extends BaseActivity implements MovieDBRe
         } else {
             newsListViewAdapter.updateMovieList(movieBeanList);
         }
-
-        showGrid();
-
     }
 
-    private void showProgress() {
+    public void clearMovieList() {
+        dynamicResultList.clear();
+    }
+
+    @Override
+    public void showProgress() {
         rl_progress.setVisibility(View.VISIBLE);
         rl_gridView.setVisibility(View.GONE);
         rl_error.setVisibility(View.GONE);
         listProgressView.setVisibility(View.GONE);
     }
 
-    private void showListProgress() {
+    @Override
+    public void showListProgress() {
         rl_progress.setVisibility(View.GONE);
         rl_gridView.setVisibility(View.VISIBLE);
         rl_error.setVisibility(View.GONE);
         listProgressView.setVisibility(View.VISIBLE);
     }
 
-    private void showGrid() {
+    @Override
+    public void showGrid() {
         rl_progress.setVisibility(View.GONE);
         rl_gridView.setVisibility(View.VISIBLE);
         rl_error.setVisibility(View.GONE);
         listProgressView.setVisibility(View.GONE);
     }
 
-    private void showError(String message) {
+    @Override
+    public void showError(String message) {
 
         loading = true;
 
@@ -255,9 +255,7 @@ public class PopularMoviesMainActivity extends BaseActivity implements MovieDBRe
         return true;
     }
 
-
-
-    private void showPopUpMenu(View menuItemAnchor) {
+    public void showPopUpMenu(View menuItemAnchor) {
         PopupMenu popup = new PopupMenu(this,
                 menuItemAnchor);
         popup.getMenuInflater().inflate(R.menu.radio_menu, popup.getMenu());
@@ -271,21 +269,49 @@ public class PopularMoviesMainActivity extends BaseActivity implements MovieDBRe
             item_voting.setChecked(false);
         }
 
-        PopUpMenuEventHandle popUpMenuEventHandle = new PopUpMenuEventHandle(PopularMoviesMainActivity.this);
+        PopUpMenuEventHandle popUpMenuEventHandle = new PopUpMenuEventHandle(PopularMoviesMainActivityNew.this);
         popup.setOnMenuItemClickListener(popUpMenuEventHandle);
         popup.show();
     }
 
     @Override
-    public void onSuccess(MovieMainBean bean) {
+    public List<Movie> getMovieList() {
+        return dynamicResultList;
+    }
 
+    public int getPageNo() {
+        return pageNo;
+    }
+
+    public void setPageNo(int pageNo){
+        this.pageNo = pageNo;
+    }
+
+    public String getSortBy(){
+        return sortBy;
+    }
+
+    public void setSortBy(String sortBy){
+        this.sortBy = sortBy;
+    }
+
+
+    public void isLoading(boolean isloading) {
+        loading = isloading;
+    }
+
+    @Override
+    public void onSuccess(MovieMainBean bean) {
         if (bean != null) {
 
             if (bean.getResults() != null && bean.getResults().size() > 0) {
+                int page = getPageNo();
                 page++;
-                loading = true;
-                dynamicResultList.addAll(bean.getResults());
+                setPageNo(page);
+                isLoading(true);
+                getMovieList().addAll(bean.getResults());
                 displayMovieList(bean.getResults());
+                showGrid();
             } else {
                 showError(getResources().getString(R.string.no_results));
             }
@@ -296,13 +322,12 @@ public class PopularMoviesMainActivity extends BaseActivity implements MovieDBRe
 
     @Override
     public void onFailure(Throwable t) {
-
         if(t instanceof IOException)
             showError(getResources().getString(R.string.no_internet));
         else
             showError(getResources().getString(R.string.server_error));
-
     }
+
 
     public class PopUpMenuEventHandle implements PopupMenu.OnMenuItemClickListener {
         Context context;
@@ -315,18 +340,18 @@ public class PopularMoviesMainActivity extends BaseActivity implements MovieDBRe
         public boolean onMenuItemClick(MenuItem item) {
             if (!setSortByPopularityChecked && item.getItemId() == R.id.sort_by_popularity) {
                 setSortByPopularityChecked = true;
-                sort_by = Constants.POPULARITY;
-                page = 1;
-                dynamicResultList.clear();
-                loadMovieList();
+                setSortBy(Constants.POPULARITY);
+                setPageNo(1);
+                clearMovieList();
+                presenter.loadMovieList(getPageNo() , getSortBy());
                 return true;
             }
             if (setSortByPopularityChecked && item.getItemId() == R.id.sort_by_voting) {
                 setSortByPopularityChecked = false;
-                sort_by = Constants.VOTE_AVERAGE;
-                page = 1;
-                dynamicResultList.clear();
-                loadMovieList();
+                setSortBy(Constants.VOTE_AVERAGE);
+                setPageNo(1);
+                clearMovieList();
+                presenter.loadMovieList(getPageNo() , getSortBy());
                 return true;
             }
             return false;

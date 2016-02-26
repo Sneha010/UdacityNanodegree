@@ -1,4 +1,4 @@
-package com.udacity.myappportfolio.bean;
+package com.udacity.myappportfolio.model;
 
 import android.os.Parcel;
 import android.os.Parcelable;

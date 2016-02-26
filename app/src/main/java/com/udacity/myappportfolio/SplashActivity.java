@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.view.Window;
 
+import com.udacity.myappportfolio.activity.PopularMoviesMainActivityNew;
+
 /**
  * Created by 587823 on 12/24/2015.
  */
@@ -21,7 +23,7 @@ public class SplashActivity extends Activity {
 
         new Handler().postDelayed(new Runnable() {
             public void run() {
-                Intent intent = new Intent(SplashActivity.this, PopularMoviesMainActivity.class);
+                Intent intent = new Intent(SplashActivity.this, PopularMoviesMainActivityNew.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 startActivity(intent);

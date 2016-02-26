@@ -24,7 +24,7 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
-import com.udacity.myappportfolio.bean.Movie;
+import com.udacity.myappportfolio.model.Movie;
 import com.udacity.myappportfolio.util.Constants;
 import com.udacity.myappportfolio.util.MyUtil;
 import com.udacity.myappportfolio.util.PaletteTransformation;

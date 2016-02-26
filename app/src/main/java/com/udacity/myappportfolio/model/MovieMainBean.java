@@ -1,4 +1,4 @@
-package com.udacity.myappportfolio.bean;
+package com.udacity.myappportfolio.model;
 
 import java.util.ArrayList;
 import java.util.List;

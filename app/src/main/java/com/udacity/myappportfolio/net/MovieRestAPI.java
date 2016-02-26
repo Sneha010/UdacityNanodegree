@@ -1,6 +1,6 @@
 package com.udacity.myappportfolio.net;
 
-import com.udacity.myappportfolio.bean.MovieMainBean;
+import com.udacity.myappportfolio.model.MovieMainBean;
 
 import retrofit.Call;
 import retrofit.http.GET;

@@ -2,11 +2,8 @@ package com.udacity.myappportfolio.net;
 
 import android.content.Context;
 
-import com.udacity.myappportfolio.R;
-import com.udacity.myappportfolio.bean.MovieMainBean;
+import com.udacity.myappportfolio.model.MovieMainBean;
 import com.udacity.myappportfolio.util.Constants;
-
-import java.io.IOException;
 
 import retrofit.Call;
 import retrofit.Callback;
@@ -19,12 +16,16 @@ import retrofit.Retrofit;
  */
 public class TheMovieDBClient {
 
-    private MovieRestAPI myService;
+    private MovieRestAPI myService = null;
+
     private Context context;
 
+    private static TheMovieDBClient client;
 
-    public TheMovieDBClient(Context context) {
-        this.context = context;
+
+
+    private TheMovieDBClient() {
+
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(Constants.BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
@@ -34,7 +35,20 @@ public class TheMovieDBClient {
     }
 
 
-    public void loadMovies(String sortBy, int pageNo , final MovieDBResponseListener listener) {
+    public static TheMovieDBClient getInstance() {
+
+        if (client == null) {
+
+            client = new TheMovieDBClient();
+
+        }
+
+        return client;
+
+    }
+
+
+    public void loadMovies(int pageNo , String sortBy, final MovieDBResponseListener listener) {
 
 
         Call<MovieMainBean> call = myService.loadMovies(sortBy, Constants.API_KEY, pageNo + "");
@@ -53,26 +67,11 @@ public class TheMovieDBClient {
             @Override
             public void onFailure(Throwable t) {
 
-                MovieDBError error = buildErrorResponse(t);
-                listener.onFailure(error);
+                listener.onFailure(t);
 
             }
         });
     }
 
-    private MovieDBError buildErrorResponse(Throwable t) {
 
-        String errorMessage =  null;
-
-        MovieDBError error = new MovieDBError();
-        if(t instanceof IOException)
-            errorMessage = context.getResources().getString(R.string.no_internet);
-        else
-            errorMessage = context.getResources().getString(R.string.server_error);
-
-        error.setErrorMessage(errorMessage);
-
-        return error;
-
-    }
 }
