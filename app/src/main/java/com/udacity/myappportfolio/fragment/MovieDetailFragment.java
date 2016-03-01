@@ -81,16 +81,16 @@ public class MovieDetailFragment extends BaseFragment {
 
          if (getArguments() != null) {
             movie = getArguments().getParcelable("movieBean");
-            fillUI();
+
         }
     }
 
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.movie_detail_main_layout, container, false);
+        View view = inflater.inflate(R.layout.movie_detail_layout, container, false);
         ButterKnife.bind(this, view);
-
+        fillUI();
         return view;
     }
 

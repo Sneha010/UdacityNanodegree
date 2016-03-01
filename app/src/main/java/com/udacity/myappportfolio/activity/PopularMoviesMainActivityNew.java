@@ -86,7 +86,7 @@ public class PopularMoviesMainActivityNew extends BaseActivity implements MovieM
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.popular_movies_main_layout);
+        setContentView(R.layout.movies_list_layout);
         ButterKnife.bind(this);
 
         presenter = new PopularMoviePresenterImpl(this);

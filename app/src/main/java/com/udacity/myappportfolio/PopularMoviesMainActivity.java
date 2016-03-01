@@ -81,7 +81,7 @@ public class PopularMoviesMainActivity extends BaseActivity implements MovieDBRe
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.popular_movies_main_layout);
+        setContentView(R.layout.movies_list_layout);
         ButterKnife.bind(this);
 
         prepareUI();

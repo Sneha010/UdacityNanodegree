@@ -6,17 +6,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <include
-        android:id="@+id/toolbar" layout="@layout/toolbar"/>
-
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:layout_below="@id/toolbar">
-
-
 
             <RelativeLayout
                 android:id="@+id/rl_gridView"
@@ -67,10 +56,5 @@
 
             <include layout="@layout/error_layout" />
         </RelativeLayout>
-
-    </RelativeLayout>
-
-
-
 
 </RelativeLayout>

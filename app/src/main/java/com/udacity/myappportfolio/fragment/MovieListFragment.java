@@ -1,14 +1,12 @@
 package com.udacity.myappportfolio.fragment;
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -20,7 +18,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.rey.material.widget.ProgressView;
-import com.udacity.myappportfolio.MovieDetailActivity;
 import com.udacity.myappportfolio.R;
 import com.udacity.myappportfolio.adapter.MovieRecyclerViewAdapter;
 import com.udacity.myappportfolio.model.Movie;
@@ -45,9 +42,6 @@ import jp.wasabeef.recyclerview.animators.adapters.ScaleInAnimationAdapter;
 
 
 public class MovieListFragment extends BaseFragment implements MovieDBResponseListener {
-
-    @Bind(R.id.toolbar)
-    Toolbar toolbar;
 
     @Bind(R.id.list)
     RecyclerView lv_gridList;
@@ -78,7 +72,24 @@ public class MovieListFragment extends BaseFragment implements MovieDBResponseLi
     private ArrayList<Movie> dynamicResultList = new ArrayList<>();
     private MovieRecyclerViewAdapter newsListViewAdapter;
     private TheMovieDBClient client;
+    private OnItemSelectedListener itemSelectlistener;
 
+    public interface OnItemSelectedListener {
+        void itemSelected(Movie movie);
+    }
+
+    public static MovieListFragment getInstance() {
+        MovieListFragment listFragment = new MovieListFragment();
+        return listFragment;
+    }
+
+    public OnItemSelectedListener getItemSelectlistener() {
+        return itemSelectlistener;
+    }
+
+    public void setItemSelectlistener(OnItemSelectedListener itemSelectlistener) {
+        this.itemSelectlistener = itemSelectlistener;
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -88,7 +99,7 @@ public class MovieListFragment extends BaseFragment implements MovieDBResponseLi
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.popular_movies_main_layout, container, false);
+        View view = inflater.inflate(R.layout.movies_list_layout, container, false);
         ButterKnife.bind(this, view);
 
         prepareUI();
@@ -101,8 +112,7 @@ public class MovieListFragment extends BaseFragment implements MovieDBResponseLi
 
 
     private void prepareUI() {
-        //getActivity().setSupportActionBar(toolbar);
-        //getActivity().getSupportActionBar().setTitle(getResources().getString(R.string.app_name_proj2));
+
         setUpGridListView();
         setUpListeners();
 
@@ -156,10 +166,8 @@ public class MovieListFragment extends BaseFragment implements MovieDBResponseLi
                         // TODO Handle item click
                         if (MyUtil.notEmpty(dynamicResultList)) {
 
-
-                            Intent i = new Intent(getActivity(), MovieDetailActivity.class);
-                            i.putExtra("movieBean", dynamicResultList.get(position));
-                            startActivity(i);
+                            if(itemSelectlistener!=null)
+                            itemSelectlistener.itemSelected(dynamicResultList.get(position));
                         }
                     }
                 })
@@ -342,6 +350,23 @@ public class MovieListFragment extends BaseFragment implements MovieDBResponseLi
             }
             return false;
         }
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof OnItemSelectedListener) {
+            itemSelectlistener = (OnItemSelectedListener) context;
+        } else {
+            throw new ClassCastException(context.toString()
+                    + " must implemenet MyListFragment.OnItemSelectedListener");
+        }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        itemSelectlistener = null;
     }
 
     @Override

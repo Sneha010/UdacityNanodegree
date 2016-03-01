@@ -69,7 +69,7 @@ public class MovieDetailActivity extends BaseActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.movie_detail_main_layout);
+        setContentView(R.layout.movie_detail_layout);
         ButterKnife.bind(this);
 
         //setSupportActionBar(toolbar);
