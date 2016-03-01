@@ -72,8 +72,8 @@ public class MovieDetailActivity extends BaseActivity {
         setContentView(R.layout.movie_detail_main_layout);
         ButterKnife.bind(this);
 
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        //setSupportActionBar(toolbar);
+        //getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
 
         if (getIntent() != null) {

@@ -91,9 +91,6 @@ public class MovieDetailFragment extends BaseFragment {
         View view = inflater.inflate(R.layout.movie_detail_main_layout, container, false);
         ButterKnife.bind(this, view);
 
-        //setSupportActionBar(toolbar);
-        //getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
         return view;
     }
 
