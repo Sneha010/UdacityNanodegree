@@ -3,6 +3,7 @@ package com.udacity.myappportfolio.fragment;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.PopupMenu;
@@ -104,12 +105,21 @@ public class MovieListFragment extends BaseFragment implements MovieDBResponseLi
 
         prepareUI();
 
-        loadMovieList();
-
         return view;
     }
 
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
 
+        if(dynamicResultList!=null && dynamicResultList.size()>0){
+            displayMovieList(dynamicResultList);
+        }else{
+
+            loadMovieList();
+
+        }
+    }
 
     private void prepareUI() {
 
@@ -167,7 +177,7 @@ public class MovieListFragment extends BaseFragment implements MovieDBResponseLi
                         if (MyUtil.notEmpty(dynamicResultList)) {
 
                             if(itemSelectlistener!=null)
-                            itemSelectlistener.itemSelected(dynamicResultList.get(position));
+                                itemSelectlistener.itemSelected(dynamicResultList.get(position));
                         }
                     }
                 })
@@ -355,6 +365,7 @@ public class MovieListFragment extends BaseFragment implements MovieDBResponseLi
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+
         if (context instanceof OnItemSelectedListener) {
             itemSelectlistener = (OnItemSelectedListener) context;
         } else {

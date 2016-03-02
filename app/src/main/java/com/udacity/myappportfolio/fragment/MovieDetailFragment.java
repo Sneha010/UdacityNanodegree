@@ -10,7 +10,6 @@ import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.graphics.Palette;
-import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -37,8 +36,6 @@ import butterknife.ButterKnife;
 
 public class MovieDetailFragment extends BaseFragment {
 
-    @Bind(R.id.toolbar)
-    Toolbar toolbar;
 
     @Bind(R.id.collapsingToolbar)
     CollapsingToolbarLayout collapsingToolbarLayout;

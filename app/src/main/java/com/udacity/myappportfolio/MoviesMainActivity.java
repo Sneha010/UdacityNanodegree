@@ -1,10 +1,12 @@
 package com.udacity.myappportfolio;
 
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.widget.LinearLayout;
 
 import com.udacity.myappportfolio.fragment.MovieDetailFragment;
@@ -25,8 +27,8 @@ public class MoviesMainActivity extends BaseActivity implements MovieListFragmen
     @Bind(R.id.ll_listView)
     LinearLayout ll_listView;
 
-    @Bind(R.id.ll_detailView)
-    LinearLayout ll_detailView;
+   /* @Bind(R.id.ll_detailView)
+    LinearLayout ll_detailView;*/
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -43,20 +45,47 @@ public class MoviesMainActivity extends BaseActivity implements MovieListFragmen
 
     private void displayMovieList(){
 
-        FragmentManager fm = getFragmentManager();
-        FragmentTransaction ft = fm.beginTransaction();
+        FragmentManager fm = getSupportFragmentManager();
+        android.support.v4.app.FragmentTransaction ft = fm.beginTransaction();
         MovieListFragment listFrament = MovieListFragment.getInstance();
-        listFrament.setItemSelectlistener(this);
-        ft.add(R.id.ll_listView, listFrament);
-        ft.commit();
 
+        if(getResources().getBoolean(R.bool.isTablet)){
+            ft.add(R.id.ll_listView, listFrament);
+            ft.commit();
+        }else{
+            ft.add(R.id.ll_listView, listFrament,"HOME");
+            ft.addToBackStack("listFragment");
+            ft.commit();
+        }
     }
 
     @Override
     public void itemSelected(Movie movie) {
-        FragmentManager fm = getFragmentManager();
+        FragmentManager fm = getSupportFragmentManager();
         FragmentTransaction ft = fm.beginTransaction();
-        ft.replace(R.id.ll_detailView, MovieDetailFragment.getInstance(movie));
-        ft.commit();
+
+        if(getResources().getBoolean(R.bool.isTablet)){
+            ft.replace(R.id.ll_detailView, MovieDetailFragment.getInstance(movie));
+            ft.commit();
+        }else{
+            ft.replace(R.id.ll_listView, MovieDetailFragment.getInstance(movie),"DETAILS");
+            ft.addToBackStack("listFragment");
+            ft.commit();
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+
+        Log.d("@@@@ " , getSupportFragmentManager().getBackStackEntryCount()+"");
+
+        Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.ll_listView);
+
+        if (fragment instanceof MovieListFragment) {
+            supportFinishAfterTransition();
+        }else {
+            super.onBackPressed();
+        }
+
     }
 }

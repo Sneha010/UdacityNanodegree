@@ -32,9 +32,7 @@ import com.udacity.myappportfolio.util.PaletteTransformation;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
-/**
- * Created by HP on 1/17/2016.
- */
+
 public class MovieDetailActivity extends BaseActivity {
 
     @Bind(R.id.toolbar)
