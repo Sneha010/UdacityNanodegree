@@ -105,7 +105,7 @@ public class MovieDetailFragment extends BaseFragment {
                         Bitmap bitmap = ((BitmapDrawable) iv_movie_poster.getDrawable()).getBitmap(); // Ew!
                         Palette palette = PaletteTransformation.getPalette(bitmap);
                         if (palette != null) {
-                            applyPalleteToWindow(palette);
+                            //applyPalleteToWindow(palette);
                         }
 
                     }
