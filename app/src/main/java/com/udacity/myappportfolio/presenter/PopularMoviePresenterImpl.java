@@ -15,7 +15,7 @@ public class PopularMoviePresenterImpl implements PopularMoviePresenter, MovieDB
 
     public PopularMoviePresenterImpl(MovieMainView movieMainView) {
         this.movieMainView = movieMainView;
-        interactor = TheMovieDBClient.getInstance();
+        interactor = TheMovieDBClient.getInstance("");
     }
 
     @Override

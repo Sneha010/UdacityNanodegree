@@ -27,4 +27,6 @@
     <!--Movie Info Part-->
     <string name="release_date">Release Date:</string>
     <string name="synopsis">Synopsis</string>
+    <string name="reviews">Reviews</string>
+    <string name="trailers">Trailers</string>
 </resources>

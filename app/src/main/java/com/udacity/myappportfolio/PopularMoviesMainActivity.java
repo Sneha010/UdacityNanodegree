@@ -169,7 +169,7 @@ public class PopularMoviesMainActivity extends BaseActivity implements MovieDBRe
             showProgress();
         }
 
-        client = TheMovieDBClient.getInstance();
+        client = TheMovieDBClient.getInstance("");
 
         client.loadMovies(page,sort_by , this);
 

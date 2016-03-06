@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent">
+
+    <com.udacity.myappportfolio.util.TextViewGotham
+        android:id="@+id/tv_AuthorName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="John"
+        android:textSize="@dimen/medium_text_size"
+        android:textColor="@color/primaryTextColor"
+        android:layout_marginTop="10dp"
+       />
+
+    <com.udacity.myappportfolio.util.TextViewGothamBook
+        android:id="@+id/tv_ReviewDesc"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="hello world!!!"
+        android:textSize="@dimen/medium_text_size"
+        android:textColor="@color/primaryTextColor"
+        android:layout_below="@id/tv_AuthorName"
+        android:layout_marginTop="10dp"
+        />
+
+</RelativeLayout>

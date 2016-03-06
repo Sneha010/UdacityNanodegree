@@ -27,6 +27,11 @@ import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 import com.udacity.myappportfolio.R;
 import com.udacity.myappportfolio.model.Movie;
+import com.udacity.myappportfolio.model.ReviewMainBean;
+import com.udacity.myappportfolio.model.TrailerMainBean;
+import com.udacity.myappportfolio.net.ReviewResponseListener;
+import com.udacity.myappportfolio.net.TheMovieDBClient;
+import com.udacity.myappportfolio.net.TrailerResponseListener;
 import com.udacity.myappportfolio.util.Constants;
 import com.udacity.myappportfolio.util.MyUtil;
 import com.udacity.myappportfolio.util.PaletteTransformation;
@@ -34,7 +39,7 @@ import com.udacity.myappportfolio.util.PaletteTransformation;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
-public class MovieDetailFragment extends BaseFragment {
+public class MovieDetailFragment extends BaseFragment implements TrailerResponseListener,ReviewResponseListener{
 
 
     @Bind(R.id.collapsingToolbar)
@@ -62,6 +67,7 @@ public class MovieDetailFragment extends BaseFragment {
     TextView tv_movieTitle;
 
     Movie movie;
+    private TheMovieDBClient client;
 
     public static MovieDetailFragment getInstance(Movie movie){
         MovieDetailFragment frag = new MovieDetailFragment();
@@ -88,9 +94,30 @@ public class MovieDetailFragment extends BaseFragment {
         View view = inflater.inflate(R.layout.movie_detail_layout, container, false);
         ButterKnife.bind(this, view);
         fillUI();
+
+        if(movie != null){
+            loadTrailerList(movie.getId());
+            loadReviewList(movie.getId());
+        }else{
+            // make visiblity gone for trailer and reviews views
+
+        }
         return view;
     }
 
+    private void loadTrailerList(int id){
+
+        client = TheMovieDBClient.getInstance("/movie/"+id);
+        client.loadTrailers(this);
+
+    }
+
+    private void loadReviewList(int id){
+
+        client = TheMovieDBClient.getInstance("/movie/"+id);
+        client.loadReviews(this);
+
+    }
 
     private void fillUI() {
 
@@ -167,6 +194,32 @@ public class MovieDetailFragment extends BaseFragment {
 
     }
 
+
+    @Override
+    public void onReviewSuccess(ReviewMainBean bean) {
+
+        if(bean!=null){
+
+        }
+
+    }
+
+    @Override
+    public void onReviewFailure(Throwable t) {
+
+    }
+
+    @Override
+    public void onTrailerSuccess(TrailerMainBean bean) {
+        if(bean!=null){
+
+        }
+    }
+
+    @Override
+    public void onTrailerFailure(Throwable t) {
+
+    }
     //Apply toolbar status and navigation color from palatte
     private void applyPalleteToWindow(Palette palette) {
 

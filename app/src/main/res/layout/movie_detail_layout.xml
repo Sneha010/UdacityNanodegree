@@ -88,82 +88,12 @@
         android:layout_marginRight="15dp"
         />
 
-
-        <RelativeLayout
-            android:id="@+id/rl_movieInfo"
+        <include android:id="@+id/info_inner_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/tv_VoteCount">
+            layout="@layout/movie_detail_inner_layout"
+            android:layout_below="@id/tv_VoteCount"/>
 
-            <com.udacity.myappportfolio.util.TextViewGotham
-                android:id="@+id/tv_movieTitle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="@color/primaryTextColor"
-                android:text="X-Men"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="10dp"
-                android:layout_marginRight="15dp"
-                android:layout_marginLeft="15dp"
-                android:textSize="@dimen/xxlarge_text_size"/>
-            <View
-                android:id="@+id/sep_line"
-                android:layout_width="match_parent"
-                android:layout_height="0.5dp"
-                android:layout_below="@id/tv_movieTitle"
-                android:background="@color/material_grey_300"
-                android:layout_marginRight="15dp"
-                android:layout_marginLeft="15dp"/>
-
-            <LinearLayout
-                android:id="@+id/ll_ReleaseDate"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:weightSum="2"
-                android:orientation="horizontal"
-                android:layout_below="@+id/sep_line"
-                android:layout_margin="15dp"
-                >
-
-            <com.udacity.myappportfolio.util.TextViewGotham
-                android:id="@+id/tv_ReleaseDateLabel"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="0.8"
-                android:text="@string/release_date"
-                android:textSize="@dimen/large_text_size"
-                android:textColor="@color/primaryTextColor"/>
-                <com.udacity.myappportfolio.util.TextViewGothamBook
-                    android:id="@+id/tv_ReleaseDateValue"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1.2"
-                    android:textSize="@dimen/large_text_size"
-                    android:textColor="@color/primaryTextColor"/>
-            </LinearLayout>
-
-            <com.udacity.myappportfolio.util.TextViewGotham
-                android:id="@+id/tv_SynopsisLabel"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/synopsis"
-                android:textSize="@dimen/large_text_size"
-                android:textColor="@color/primaryTextColor"
-                android:layout_below="@id/ll_ReleaseDate"
-                android:layout_marginTop="10dp"
-                android:layout_marginLeft="15dp"/>
-
-            <com.udacity.myappportfolio.util.TextViewGothamBook
-                android:id="@+id/tv_SynopsisValue"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="@dimen/large_text_size"
-                android:textColor="@color/secondaryTextColor"
-                android:layout_below="@id/tv_SynopsisLabel"
-                android:lineSpacingExtra="3dp"
-                android:layout_margin="15dp"
-                />
-            </RelativeLayout>
         </RelativeLayout>
 
     </android.support.v4.widget.NestedScrollView>

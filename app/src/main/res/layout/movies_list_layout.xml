@@ -19,7 +19,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 tools:listitem="@layout/movie_grid_layout"
-
                 />
 
             <com.rey.material.widget.ProgressView

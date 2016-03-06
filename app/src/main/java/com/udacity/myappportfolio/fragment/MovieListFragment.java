@@ -84,13 +84,6 @@ public class MovieListFragment extends BaseFragment implements MovieDBResponseLi
         return listFragment;
     }
 
-    public OnItemSelectedListener getItemSelectlistener() {
-        return itemSelectlistener;
-    }
-
-    public void setItemSelectlistener(OnItemSelectedListener itemSelectlistener) {
-        this.itemSelectlistener = itemSelectlistener;
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -199,7 +192,7 @@ public class MovieListFragment extends BaseFragment implements MovieDBResponseLi
             showProgress();
         }
 
-        client = TheMovieDBClient.getInstance();
+        client = TheMovieDBClient.getInstance("");
 
         client.loadMovies(page,sort_by , this);
 
