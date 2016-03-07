@@ -31,7 +31,7 @@ public class TheMovieDBClient {
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(Constants.BASE_URL + baseParams)
                 .addConverterFactory(GsonConverterFactory.create())
-                .client(getLoggingClient())
+                //.client(getLoggingClient())
                 .build();
 
         myService = retrofit.create(MovieRestAPI.class);

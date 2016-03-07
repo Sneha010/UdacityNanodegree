@@ -10,15 +10,15 @@ import retrofit.http.Query;
 
 
 public interface MovieRestAPI {
-    @GET("/discover/movie")
+    @GET("discover/movie")
     Call<MovieMainBean> loadMovies(@Query("sort_by") String sort_by ,
                                    @Query("api_key") String api_key ,
                                    @Query("page") String page);
 
-    @GET("/reviews")
+    @GET("reviews")
     Call<ReviewMainBean> loadReviews(@Query("api_key") String api_key);
 
-    @GET("/videos")
+    @GET("videos")
     Call<TrailerMainBean> loadTrailers(@Query("api_key") String api_key);
 
 }
