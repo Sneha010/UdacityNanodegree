@@ -8,5 +8,6 @@ public class Constants {
     public static final String API_KEY = "c828d18e73df20d04a0a762f7a126d29";
     public static final String POPULARITY = "popularity.desc";
     public static final String VOTE_AVERAGE = "vote_average.desc";
+    public static final String YOUTUBE_BASE_URL = "http://www.youtube.com/watch?v=";
 
 }

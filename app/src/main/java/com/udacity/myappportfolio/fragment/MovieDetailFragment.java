@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.graphics.Palette;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -26,6 +27,8 @@ import android.widget.TextView;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 import com.udacity.myappportfolio.R;
+import com.udacity.myappportfolio.adapter.ReviewAdapter;
+import com.udacity.myappportfolio.adapter.TrailerAdapter;
 import com.udacity.myappportfolio.model.Movie;
 import com.udacity.myappportfolio.model.ReviewMainBean;
 import com.udacity.myappportfolio.model.TrailerMainBean;
@@ -65,6 +68,15 @@ public class MovieDetailFragment extends BaseFragment implements TrailerResponse
 
     @Bind(R.id.tv_movieTitle)
     TextView tv_movieTitle;
+
+    @Bind(R.id.reviewsList)
+    RecyclerView reviewRecyclerView;
+
+    @Bind(R.id.trailersList)
+    RecyclerView trailerRecyclerView;
+
+    private ReviewAdapter reviewAdapter;
+    private TrailerAdapter trailerAdapter;
 
     Movie movie;
     private TheMovieDBClient client;
@@ -199,7 +211,8 @@ public class MovieDetailFragment extends BaseFragment implements TrailerResponse
     public void onReviewSuccess(ReviewMainBean bean) {
 
         if(bean!=null){
-
+            reviewAdapter = new ReviewAdapter(getActivity(), bean.getResults());
+            reviewRecyclerView.setAdapter(reviewAdapter);
         }
 
     }
@@ -212,7 +225,8 @@ public class MovieDetailFragment extends BaseFragment implements TrailerResponse
     @Override
     public void onTrailerSuccess(TrailerMainBean bean) {
         if(bean!=null){
-
+            trailerAdapter = new TrailerAdapter(getActivity(), bean.getResults());
+            trailerRecyclerView.setAdapter(trailerAdapter);
         }
     }
 
