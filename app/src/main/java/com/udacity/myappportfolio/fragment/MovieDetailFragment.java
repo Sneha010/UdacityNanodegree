@@ -38,6 +38,7 @@ import com.udacity.myappportfolio.net.TrailerResponseListener;
 import com.udacity.myappportfolio.util.Constants;
 import com.udacity.myappportfolio.util.MyUtil;
 import com.udacity.myappportfolio.util.PaletteTransformation;
+import com.udacity.myappportfolio.util.WrappingLinearLayoutManager;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -78,6 +79,9 @@ public class MovieDetailFragment extends BaseFragment implements TrailerResponse
     private ReviewAdapter reviewAdapter;
     private TrailerAdapter trailerAdapter;
 
+    private WrappingLinearLayoutManager reviewLLmanager;
+    private WrappingLinearLayoutManager trailerLLmanager;
+
     Movie movie;
     private TheMovieDBClient client;
 
@@ -106,6 +110,7 @@ public class MovieDetailFragment extends BaseFragment implements TrailerResponse
         View view = inflater.inflate(R.layout.movie_detail_layout, container, false);
         ButterKnife.bind(this, view);
         fillUI();
+        setUpRecyclerView();
 
         if(movie != null){
             loadTrailerList(movie.getId());
@@ -117,16 +122,30 @@ public class MovieDetailFragment extends BaseFragment implements TrailerResponse
         return view;
     }
 
+    private void setUpRecyclerView(){
+        reviewLLmanager = new WrappingLinearLayoutManager(getActivity());
+        reviewRecyclerView.setNestedScrollingEnabled(false);
+        reviewRecyclerView.setHasFixedSize(false);
+        reviewRecyclerView.setLayoutManager(reviewLLmanager);
+
+        trailerLLmanager = new WrappingLinearLayoutManager(getActivity());
+        trailerRecyclerView.setNestedScrollingEnabled(false);
+        trailerRecyclerView.setHasFixedSize(false);
+        trailerRecyclerView.setLayoutManager(trailerLLmanager);
+
+
+    }
+
     private void loadTrailerList(int id){
 
-        client = TheMovieDBClient.getInstance("/movie/"+id);
+        client = TheMovieDBClient.getInstance("movie/"+id+"/");
         client.loadTrailers(this);
 
     }
 
     private void loadReviewList(int id){
 
-        client = TheMovieDBClient.getInstance("/movie/"+id);
+        client = TheMovieDBClient.getInstance("movie/"+id+"/");
         client.loadReviews(this);
 
     }

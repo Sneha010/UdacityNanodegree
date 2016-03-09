@@ -28,8 +28,10 @@ public class TheMovieDBClient {
 
     private TheMovieDBClient(String baseParams) {
 
+        String url = Constants.BASE_URL + baseParams;
+
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(Constants.BASE_URL + baseParams)
+                .baseUrl(url)
                 .addConverterFactory(GsonConverterFactory.create())
                 //.client(getLoggingClient())
                 .build();
@@ -40,9 +42,9 @@ public class TheMovieDBClient {
 
     public static TheMovieDBClient getInstance(String baseParams) {
 
-        if (client == null) {
+        //if (client == null) {
             client = new TheMovieDBClient(baseParams);
-        }
+        //}
 
         return client;
 
