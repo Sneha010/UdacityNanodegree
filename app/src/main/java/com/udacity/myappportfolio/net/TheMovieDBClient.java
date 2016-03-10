@@ -40,11 +40,19 @@ public class TheMovieDBClient {
     }
 
 
+    public static TheMovieDBClient getInstance() {
+
+        if (client == null) {
+            client = new TheMovieDBClient("");
+        }
+
+        return client;
+
+    }
+
     public static TheMovieDBClient getInstance(String baseParams) {
 
-        //if (client == null) {
             client = new TheMovieDBClient(baseParams);
-        //}
 
         return client;
 

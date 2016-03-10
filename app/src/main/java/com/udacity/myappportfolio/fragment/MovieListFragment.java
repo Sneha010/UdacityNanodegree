@@ -192,7 +192,7 @@ public class MovieListFragment extends BaseFragment implements MovieDBResponseLi
             showProgress();
         }
 
-        client = TheMovieDBClient.getInstance("");
+        client = TheMovieDBClient.getInstance();
 
         client.loadMovies(page,sort_by , this);
 

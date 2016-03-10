@@ -91,7 +91,8 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/tv_ReviewLabel"
         tools:listitem="@layout/review_row_item_layout"
-        android:visibility="visible"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
         />
 
 
@@ -111,8 +112,12 @@
         android:id="@+id/trailersList"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
         android:layout_below="@id/tv_TrailerLabel"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
         tools:listitem="@layout/trailer_row_item_layout"
+        android:layout_marginBottom="15dp"
         />
 
     </RelativeLayout>

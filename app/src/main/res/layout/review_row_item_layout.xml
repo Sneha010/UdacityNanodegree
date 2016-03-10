@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent" android:layout_height="match_parent">
+    android:layout_width="match_parent" android:layout_height="wrap_content"
+    >
 
     <com.udacity.myappportfolio.util.TextViewGotham
         android:id="@+id/tv_AuthorName"
@@ -18,7 +19,8 @@
         android:layout_height="wrap_content"
         android:text="hello world!!!"
         android:textSize="@dimen/medium_text_size"
-        android:textColor="@color/primaryTextColor"
+        android:textColor="@color/secondaryTextColor"
+        android:lineSpacingExtra="2dp"
         android:layout_below="@id/tv_AuthorName"
         android:layout_marginTop="10dp"
         />

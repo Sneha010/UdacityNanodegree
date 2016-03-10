@@ -11,6 +11,7 @@ import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.graphics.Palette;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -230,6 +231,7 @@ public class MovieDetailFragment extends BaseFragment implements TrailerResponse
     public void onReviewSuccess(ReviewMainBean bean) {
 
         if(bean!=null){
+            Log.d("@@@Review" ,""+bean.getResults().size());
             reviewAdapter = new ReviewAdapter(getActivity(), bean.getResults());
             reviewRecyclerView.setAdapter(reviewAdapter);
         }
@@ -244,6 +246,7 @@ public class MovieDetailFragment extends BaseFragment implements TrailerResponse
     @Override
     public void onTrailerSuccess(TrailerMainBean bean) {
         if(bean!=null){
+            Log.d("@@@Trailer" ,""+bean.getResults().size());
             trailerAdapter = new TrailerAdapter(getActivity(), bean.getResults());
             trailerRecyclerView.setAdapter(trailerAdapter);
         }
