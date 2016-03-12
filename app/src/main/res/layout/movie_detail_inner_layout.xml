@@ -104,7 +104,7 @@
         android:textSize="@dimen/large_text_size"
         android:textColor="@color/primaryTextColor"
         android:layout_below="@id/reviewsList"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="15dp"
         android:layout_marginLeft="15dp"/>
 
 

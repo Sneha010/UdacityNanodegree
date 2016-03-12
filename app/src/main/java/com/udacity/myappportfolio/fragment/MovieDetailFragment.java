@@ -11,7 +11,6 @@ import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.graphics.Palette;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -70,6 +69,12 @@ public class MovieDetailFragment extends BaseFragment implements TrailerResponse
 
     @Bind(R.id.tv_movieTitle)
     TextView tv_movieTitle;
+
+    @Bind(R.id.tv_ReviewLabel)
+    TextView tv_ReviewLabel;
+
+    @Bind(R.id.tv_TrailerLabel)
+    TextView tv_TrailerLabel;
 
     @Bind(R.id.reviewsList)
     RecyclerView reviewRecyclerView;
@@ -231,9 +236,16 @@ public class MovieDetailFragment extends BaseFragment implements TrailerResponse
     public void onReviewSuccess(ReviewMainBean bean) {
 
         if(bean!=null){
-            Log.d("@@@Review" ,""+bean.getResults().size());
-            reviewAdapter = new ReviewAdapter(getActivity(), bean.getResults());
-            reviewRecyclerView.setAdapter(reviewAdapter);
+            if(bean.getResults().size() > 0){
+                tv_ReviewLabel.setVisibility(View.VISIBLE);
+                reviewRecyclerView.setVisibility(View.VISIBLE);
+                reviewAdapter = new ReviewAdapter(getActivity(), bean.getResults() , movie.getOriginal_title());
+                reviewRecyclerView.setAdapter(reviewAdapter);
+            }else{
+                tv_ReviewLabel.setVisibility(View.GONE);
+                reviewRecyclerView.setVisibility(View.GONE);
+            }
+
         }
 
     }
@@ -246,9 +258,15 @@ public class MovieDetailFragment extends BaseFragment implements TrailerResponse
     @Override
     public void onTrailerSuccess(TrailerMainBean bean) {
         if(bean!=null){
-            Log.d("@@@Trailer" ,""+bean.getResults().size());
-            trailerAdapter = new TrailerAdapter(getActivity(), bean.getResults());
-            trailerRecyclerView.setAdapter(trailerAdapter);
+            if(bean.getResults().size() > 0) {
+                tv_TrailerLabel.setVisibility(View.VISIBLE);
+                trailerRecyclerView.setVisibility(View.VISIBLE);
+                trailerAdapter = new TrailerAdapter(getActivity(), bean.getResults());
+                trailerRecyclerView.setAdapter(trailerAdapter);
+            }else{
+                tv_TrailerLabel.setVisibility(View.GONE);
+                trailerRecyclerView.setVisibility(View.GONE);
+            }
         }
     }
 

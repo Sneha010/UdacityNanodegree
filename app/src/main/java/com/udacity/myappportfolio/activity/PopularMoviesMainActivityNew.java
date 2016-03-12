@@ -16,6 +16,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.rey.material.widget.ProgressView;
 import com.udacity.myappportfolio.BaseActivity;
@@ -69,7 +70,8 @@ public class PopularMoviesMainActivityNew extends BaseActivity implements MovieM
     @Bind(R.id.progress_pv_circular_colors)
     ProgressView listProgressView;
 
-    private boolean setSortByPopularityChecked = true;
+    private boolean setSortByPopularityChecked = true , setSortByVotingChecked = false ,
+    setSortByFavChecked = false;
 
     private boolean loading = true;
     private int pastVisiblesItems, visibleItemCount, totalItemCount;
@@ -262,11 +264,22 @@ public class PopularMoviesMainActivityNew extends BaseActivity implements MovieM
 
         MenuItem item_popularity = popup.getMenu().findItem(R.id.sort_by_popularity);
         MenuItem item_voting = popup.getMenu().findItem(R.id.sort_by_voting);
+        MenuItem item_fav = popup.getMenu().findItem(R.id.favorites);
+
+        Log.d("aaaa" , setSortByPopularityChecked + " "+setSortByVotingChecked +" "+setSortByFavChecked);
 
         if (setSortByPopularityChecked) {
             item_popularity.setChecked(true);
-        } else {
             item_voting.setChecked(false);
+            item_fav.setChecked(false);
+        } else if(setSortByVotingChecked){
+            item_voting.setChecked(true);
+            item_fav.setChecked(false);
+            item_popularity.setChecked(false);
+        }else if(setSortByFavChecked){
+            item_fav.setChecked(true);
+            item_voting.setChecked(false);
+            item_popularity.setChecked(false);
         }
 
         PopUpMenuEventHandle popUpMenuEventHandle = new PopUpMenuEventHandle(PopularMoviesMainActivityNew.this);
@@ -338,20 +351,32 @@ public class PopularMoviesMainActivityNew extends BaseActivity implements MovieM
 
         @Override
         public boolean onMenuItemClick(MenuItem item) {
-            if (!setSortByPopularityChecked && item.getItemId() == R.id.sort_by_popularity) {
+            if (item.getItemId() == R.id.sort_by_popularity) {
                 setSortByPopularityChecked = true;
+                setSortByVotingChecked = false;
+                setSortByFavChecked = false;
                 setSortBy(Constants.POPULARITY);
                 setPageNo(1);
                 clearMovieList();
                 presenter.loadMovieList(getPageNo() , getSortBy());
                 return true;
             }
-            if (setSortByPopularityChecked && item.getItemId() == R.id.sort_by_voting) {
+            if (item.getItemId() == R.id.sort_by_voting) {
+                setSortByVotingChecked = true;
                 setSortByPopularityChecked = false;
+                setSortByFavChecked = false;
                 setSortBy(Constants.VOTE_AVERAGE);
                 setPageNo(1);
                 clearMovieList();
                 presenter.loadMovieList(getPageNo() , getSortBy());
+                return true;
+            }
+            if (item.getItemId() == R.id.favorites) {
+                Toast.makeText(PopularMoviesMainActivityNew.this , "Hii", Toast.LENGTH_SHORT).show();
+                setSortByFavChecked = true;
+                setSortByPopularityChecked = false;
+                setSortByVotingChecked = false;
+                clearMovieList();
                 return true;
             }
             return false;
