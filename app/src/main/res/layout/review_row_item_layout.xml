@@ -20,9 +20,11 @@
         android:text="hello world!!!"
         android:textSize="@dimen/medium_text_size"
         android:textColor="@color/secondaryTextColor"
-        android:lineSpacingExtra="2dp"
+        android:lineSpacingExtra="3dp"
         android:layout_below="@id/tv_AuthorName"
         android:layout_marginTop="10dp"
+        android:maxLines="4"
+        android:ellipsize="end"
         />
 
 </RelativeLayout>
