@@ -1,8 +1,11 @@
 package com.udacity.myappportfolio.activity;
 
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.GridLayoutManager;
@@ -23,6 +26,7 @@ import com.udacity.myappportfolio.BaseActivity;
 import com.udacity.myappportfolio.MovieDetailActivity;
 import com.udacity.myappportfolio.R;
 import com.udacity.myappportfolio.adapter.MovieRecyclerViewAdapter;
+import com.udacity.myappportfolio.db.FavMovieContract;
 import com.udacity.myappportfolio.model.Movie;
 import com.udacity.myappportfolio.model.MovieMainBean;
 import com.udacity.myappportfolio.net.MovieRestAPI;
@@ -174,7 +178,7 @@ public class PopularMoviesMainActivityNew extends BaseActivity implements MovieM
 
 
     public void displayMovieList(List<Movie> movieBeanList) {
-        if (getPageNo() == 2) {
+        if (getPageNo() == 2 || setSortByFavChecked) {
             newsListViewAdapter = new MovieRecyclerViewAdapter(
                     PopularMoviesMainActivityNew.this, movieBeanList);
             lv_gridList.setItemAnimator(new FadeInAnimator());
@@ -184,6 +188,7 @@ public class PopularMoviesMainActivityNew extends BaseActivity implements MovieM
         } else {
             newsListViewAdapter.updateMovieList(movieBeanList);
         }
+
     }
 
     public void clearMovieList() {
@@ -362,6 +367,7 @@ public class PopularMoviesMainActivityNew extends BaseActivity implements MovieM
                 return true;
             }
             if (item.getItemId() == R.id.sort_by_voting) {
+
                 setSortByVotingChecked = true;
                 setSortByPopularityChecked = false;
                 setSortByFavChecked = false;
@@ -376,11 +382,47 @@ public class PopularMoviesMainActivityNew extends BaseActivity implements MovieM
                 setSortByFavChecked = true;
                 setSortByPopularityChecked = false;
                 setSortByVotingChecked = false;
+                ArrayList<Movie> favMovieList = fetchFavMoviesFromDb();
                 clearMovieList();
+                displayMovieList(favMovieList);
                 return true;
             }
             return false;
         }
+    }
+
+    private ArrayList<Movie> fetchFavMoviesFromDb(){
+
+        ArrayList<Movie> favMovieList = new ArrayList<>();
+
+        Uri uri = FavMovieContract.CONTENT_URI;
+        ContentResolver resolver = getContentResolver();
+        String[] projection = new String[]{FavMovieContract.Columns.MOVIE_ID,
+                FavMovieContract.Columns.MOVIE_TITLE,
+                FavMovieContract.Columns.MOVIE_RELEASE_DATE,
+                FavMovieContract.Columns.MOVIE_RATING,
+                FavMovieContract.Columns.MOVIE_SYNOPSIS,
+                FavMovieContract.Columns.MOVIE_POSTER_URL};
+        Cursor cursor =
+                resolver.query(uri, projection,null, null,null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                Movie m = new Movie();
+
+                m.setId(cursor.getInt(0));
+                m.setOriginal_title(cursor.getString(1));
+                m.setRelease_date(cursor.getString(2));
+                m.setVote_average(Double.parseDouble(cursor.getString(3)));
+                m.setOverview(cursor.getString(4));
+                m.setPoster_path(cursor.getString(5));
+
+                favMovieList.add(m);
+
+            } while (cursor.moveToNext());
+        }
+
+        return favMovieList;
     }
 
     @Override
