@@ -56,4 +56,14 @@
             <include layout="@layout/error_layout" />
         </RelativeLayout>
 
+    <com.udacity.myappportfolio.util.TextViewGothamBook
+        android:id="@+id/tv_NoFavMovieAddedText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:textSize="@dimen/large_text_size"
+        android:textColor="@color/secondaryTextColor"
+        android:text="@string/no_fav_movie"
+        android:visibility="gone"/>
+
 </RelativeLayout>

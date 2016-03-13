@@ -254,7 +254,7 @@ public class PopularMoviesMainActivityNew extends BaseActivity implements MovieM
         switch (item.getItemId()) {
 
             case R.id.action_sort:
-                showPopUpMenu((View) findViewById(R.id.action_sort));
+                //showPopUpMenu((View) findViewById(R.id.action_sort));
                 break;
             default:
 

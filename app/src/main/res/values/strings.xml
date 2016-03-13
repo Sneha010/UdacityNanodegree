@@ -35,4 +35,5 @@
     <string name="movie_removed">Movie removed from Favorites</string>
     <string name="error_movie_added">Error in inserting Movie to Favorites</string>
     <string name="error_movie_removed">Error in removing Movie from Favorites</string>
+    <string name="no_fav_movie">No Favorite movie added.</string>
 </resources>

@@ -338,10 +338,10 @@ public class MovieDetailFragment extends BaseFragment implements TrailerResponse
 
         if(bean!=null){
             if(bean.getResults().size() > 0){
-                tv_ReviewLabel.setVisibility(View.VISIBLE);
-                reviewRecyclerView.setVisibility(View.VISIBLE);
                 reviewAdapter = new ReviewAdapter(getActivity(), bean.getResults() , movie.getOriginal_title());
                 reviewRecyclerView.setAdapter(reviewAdapter);
+                tv_ReviewLabel.setVisibility(View.VISIBLE);
+                reviewRecyclerView.setVisibility(View.VISIBLE);
             }else{
                 tv_ReviewLabel.setVisibility(View.GONE);
                 reviewRecyclerView.setVisibility(View.GONE);
@@ -353,17 +353,18 @@ public class MovieDetailFragment extends BaseFragment implements TrailerResponse
 
     @Override
     public void onReviewFailure(Throwable t) {
-
+        tv_ReviewLabel.setVisibility(View.GONE);
+        reviewRecyclerView.setVisibility(View.GONE);
     }
 
     @Override
     public void onTrailerSuccess(TrailerMainBean bean) {
         if(bean!=null){
             if(bean.getResults().size() > 0) {
-                tv_TrailerLabel.setVisibility(View.VISIBLE);
-                trailerRecyclerView.setVisibility(View.VISIBLE);
                 trailerAdapter = new TrailerAdapter(getActivity(), bean.getResults());
                 trailerRecyclerView.setAdapter(trailerAdapter);
+                tv_TrailerLabel.setVisibility(View.VISIBLE);
+                trailerRecyclerView.setVisibility(View.VISIBLE);
             }else{
                 tv_TrailerLabel.setVisibility(View.GONE);
                 trailerRecyclerView.setVisibility(View.GONE);
@@ -373,7 +374,8 @@ public class MovieDetailFragment extends BaseFragment implements TrailerResponse
 
     @Override
     public void onTrailerFailure(Throwable t) {
-
+        tv_TrailerLabel.setVisibility(View.GONE);
+        trailerRecyclerView.setVisibility(View.GONE);
     }
     //Apply toolbar status and navigation color from palatte
     private void applyPalleteToWindow(Palette palette) {
