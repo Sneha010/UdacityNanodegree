@@ -42,9 +42,9 @@ public class TheMovieDBClient {
 
     public static TheMovieDBClient getInstance() {
 
-        if (client == null) {
+        //if (client == null) {
             client = new TheMovieDBClient("");
-        }
+        //}
 
         return client;
 

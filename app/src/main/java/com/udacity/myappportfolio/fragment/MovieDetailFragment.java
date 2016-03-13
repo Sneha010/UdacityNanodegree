@@ -1,6 +1,9 @@
 package com.udacity.myappportfolio.fragment;
 
+import android.content.ContentResolver;
 import android.content.ContentValues;
+import android.database.Cursor;
+import android.database.SQLException;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
@@ -97,6 +100,7 @@ public class MovieDetailFragment extends BaseFragment implements TrailerResponse
 
     Movie movie;
     private TheMovieDBClient client;
+    boolean isFavorite = false;
 
     public static MovieDetailFragment getInstance(Movie movie){
         MovieDetailFragment frag = new MovieDetailFragment();
@@ -131,25 +135,57 @@ public class MovieDetailFragment extends BaseFragment implements TrailerResponse
 
     @OnClick(R.id.iv_fav_icon)
     void favIconSelected(){
-        iv_fav_icon.setImageDrawable(getActivity().getResources().getDrawable(R.drawable.red_heart));
-        addMovieToDb();
+        if(isFavorite)
+            deleteMovieFromDb();
+        else
+            addMovieToDb();
     }
 
     private void addMovieToDb(){
-        ContentValues values = new ContentValues();
 
-        values.put(FavMovieContract.Columns.MOVIE_ID , movie.getId());
-        values.put(FavMovieContract.Columns.MOVIE_TITLE , movie.getOriginal_title());
-        values.put(FavMovieContract.Columns.MOVIE_RELEASE_DATE , movie.getRelease_date());
-        values.put(FavMovieContract.Columns.MOVIE_RATING , movie.getVote_average());
-        values.put(FavMovieContract.Columns.MOVIE_SYNOPSIS , movie.getOverview());
-        values.put(FavMovieContract.Columns.MOVIE_POSTER_URL , movie.getPoster_path());
+        try {
+            ContentValues values = new ContentValues();
 
-
-        Uri uri = getActivity().getContentResolver().insert(
-                FavMovieContract.CONTENT_URI, values);
+            values.put(FavMovieContract.Columns.MOVIE_ID , movie.getId());
+            values.put(FavMovieContract.Columns.MOVIE_TITLE , movie.getOriginal_title());
+            values.put(FavMovieContract.Columns.MOVIE_RELEASE_DATE , movie.getRelease_date());
+            values.put(FavMovieContract.Columns.MOVIE_RATING , movie.getVote_average());
+            values.put(FavMovieContract.Columns.MOVIE_SYNOPSIS , movie.getOverview());
+            values.put(FavMovieContract.Columns.MOVIE_POSTER_URL , movie.getPoster_path());
 
 
+            Uri uri = getActivity().getContentResolver().insert(
+                    FavMovieContract.CONTENT_URI, values);
+
+            MyUtil.displayCustomToast(getActivity() , getActivity().getResources().getString(R.string.movie_added));
+            iv_fav_icon.setImageResource(R.drawable.red_heart);
+
+            isFavorite = true;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            isFavorite = false;
+            MyUtil.displayCustomToast(getActivity() , getActivity().getResources().getString(R.string.error_movie_added));
+        }
+
+
+    }
+
+    private void deleteMovieFromDb(){
+        Uri uri = FavMovieContract.CONTENT_URI;
+        int result = getActivity().getContentResolver().delete(uri,
+                FavMovieContract.Columns.MOVIE_ID + "=?",
+                new String[]{movie.getId()+""});
+
+        if(result == 0){
+            MyUtil.displayCustomToast(getActivity() , getActivity().getResources().getString(R.string.movie_removed));
+            iv_fav_icon.setImageResource(R.drawable.grey_trans_heart);
+            isFavorite = false;
+        }else{
+            MyUtil.displayCustomToast(getActivity() , getActivity().getResources().getString(R.string.error_movie_removed));
+            iv_fav_icon.setImageResource(R.drawable.red_heart);
+            isFavorite = true;
+        }
     }
 
     private void requestForReviewAndTrailer(){
@@ -239,7 +275,37 @@ public class MovieDetailFragment extends BaseFragment implements TrailerResponse
         }
 
         fillRatingStars();
+        checkForFavMovie();
+    }
 
+    private void checkForFavMovie(){
+
+        Uri uri = FavMovieContract.CONTENT_URI;
+        ContentResolver resolver = getActivity().getContentResolver();
+        String[] projection = new String[]{FavMovieContract.Columns.MOVIE_ID, FavMovieContract.Columns.MOVIE_TITLE};
+        Cursor cursor =
+                resolver.query(uri, projection,null, null,null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                long id = cursor.getInt(0);
+                String name = cursor.getString(1);
+
+                if(id == movie.getId()){
+                    isFavorite = true;
+                    break;
+                }
+
+            } while (cursor.moveToNext());
+        }
+
+
+        if(isFavorite)
+            iv_fav_icon.setImageResource(R.drawable.red_heart);
+        else
+            iv_fav_icon.setImageResource(R.drawable.grey_trans_heart);
+
+        iv_fav_icon.setVisibility(View.VISIBLE);
     }
 
     private void fillRatingStars() {
