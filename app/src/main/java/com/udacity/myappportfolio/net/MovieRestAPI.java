@@ -6,6 +6,7 @@ import com.udacity.myappportfolio.model.TrailerMainBean;
 
 import retrofit.Call;
 import retrofit.http.GET;
+import retrofit.http.Path;
 import retrofit.http.Query;
 
 
@@ -15,10 +16,12 @@ public interface MovieRestAPI {
                                    @Query("api_key") String api_key ,
                                    @Query("page") String page);
 
-    @GET("reviews")
-    Call<ReviewMainBean> loadReviews(@Query("api_key") String api_key);
+    @GET("movie/{id}/reviews")
+    Call<ReviewMainBean> loadReviews(@Path("id") int movieId,
+                                     @Query("api_key") String api_key);
 
-    @GET("videos")
-    Call<TrailerMainBean> loadTrailers(@Query("api_key") String api_key);
+    @GET("movie/{id}/videos")
+    Call<TrailerMainBean> loadTrailers(@Path("id") int movieId,
+                                       @Query("api_key") String api_key);
 
 }

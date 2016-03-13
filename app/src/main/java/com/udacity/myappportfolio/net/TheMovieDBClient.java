@@ -26,12 +26,11 @@ public class TheMovieDBClient {
 
 
 
-    private TheMovieDBClient(String baseParams) {
+    private TheMovieDBClient() {
 
-        String url = Constants.BASE_URL + baseParams;
 
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(url)
+                .baseUrl(Constants.BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
                 //.client(getLoggingClient())
                 .build();
@@ -42,22 +41,13 @@ public class TheMovieDBClient {
 
     public static TheMovieDBClient getInstance() {
 
-        //if (client == null) {
-            client = new TheMovieDBClient("");
-        //}
+        if (client == null) {
+            client = new TheMovieDBClient();
+        }
 
         return client;
 
     }
-
-    public static TheMovieDBClient getInstance(String baseParams) {
-
-            client = new TheMovieDBClient(baseParams);
-
-        return client;
-
-    }
-
 
     public void loadMovies(int pageNo , String sortBy, final MovieDBResponseListener listener) {
 
@@ -79,9 +69,9 @@ public class TheMovieDBClient {
         });
     }
 
-    public void loadTrailers(final TrailerResponseListener listener) {
+    public void loadTrailers(int movieId, final TrailerResponseListener listener) {
 
-        Call<TrailerMainBean> call = myService.loadTrailers(Constants.API_KEY);
+        Call<TrailerMainBean> call = myService.loadTrailers(movieId ,Constants.API_KEY);
 
         call.enqueue(new Callback<TrailerMainBean>() {
             @Override
@@ -100,9 +90,9 @@ public class TheMovieDBClient {
     }
 
 
-    public void loadReviews(final ReviewResponseListener listener) {
+    public void loadReviews(int movieId ,final ReviewResponseListener listener) {
 
-        Call<ReviewMainBean> call = myService.loadReviews(Constants.API_KEY);
+        Call<ReviewMainBean> call = myService.loadReviews(movieId, Constants.API_KEY);
 
         call.enqueue(new Callback<ReviewMainBean>() {
             @Override

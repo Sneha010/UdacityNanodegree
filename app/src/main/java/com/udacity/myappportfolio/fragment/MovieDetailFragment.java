@@ -215,15 +215,15 @@ public class MovieDetailFragment extends BaseFragment implements TrailerResponse
 
     private void loadTrailerList(int id){
 
-        client = TheMovieDBClient.getInstance("movie/"+id+"/");
-        client.loadTrailers(this);
+        client = TheMovieDBClient.getInstance();
+        client.loadTrailers(id, this);
 
     }
 
     private void loadReviewList(int id){
 
-        client = TheMovieDBClient.getInstance("movie/"+id+"/");
-        client.loadReviews(this);
+        client = TheMovieDBClient.getInstance();
+        client.loadReviews(id, this);
 
     }
 
