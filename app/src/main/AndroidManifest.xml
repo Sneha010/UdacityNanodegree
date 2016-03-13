@@ -44,6 +44,10 @@
             android:label="@string/app_name_proj2"
             android:theme="@style/AppTheme"
             android:configChanges="keyboardHidden|orientation|screenSize"/>
+
+        <provider
+            android:authorities="com.udacity.myappportfolio.myFavMovies"
+            android:name=".db.FavMovieProvider" />
     </application>
 
 </manifest>

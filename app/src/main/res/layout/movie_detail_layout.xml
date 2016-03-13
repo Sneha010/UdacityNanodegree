@@ -41,24 +41,14 @@
                 android:background="@drawable/trans_black_shaded_drawable"
                 android:layout_gravity="bottom"/>
 
-        <ImageView
-            android:id="@+id/iv_heart_selected"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/red_heart"
-            android:layout_gravity="bottom|right"
-            android:layout_margin="15dp"
-            android:visibility="gone"/>
 
             <ImageView
-                android:id="@+id/iv_heart_unselected"
+                android:id="@+id/iv_fav_icon"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/grey_trans_heart"
                 android:layout_gravity="bottom|right"
                 android:layout_margin="15dp"/>
-
-
 
 
         </android.support.design.widget.CollapsingToolbarLayout>

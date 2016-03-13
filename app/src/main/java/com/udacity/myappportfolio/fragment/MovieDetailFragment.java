@@ -1,10 +1,12 @@
 package com.udacity.myappportfolio.fragment;
 
+import android.content.ContentValues;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.LayerDrawable;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
@@ -29,6 +31,7 @@ import com.squareup.picasso.Picasso;
 import com.udacity.myappportfolio.R;
 import com.udacity.myappportfolio.adapter.ReviewAdapter;
 import com.udacity.myappportfolio.adapter.TrailerAdapter;
+import com.udacity.myappportfolio.db.FavMovieContract;
 import com.udacity.myappportfolio.model.Movie;
 import com.udacity.myappportfolio.model.ReviewMainBean;
 import com.udacity.myappportfolio.model.TrailerMainBean;
@@ -42,6 +45,7 @@ import com.udacity.myappportfolio.util.WrappingLinearLayoutManager;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 public class MovieDetailFragment extends BaseFragment implements TrailerResponseListener,ReviewResponseListener{
 
@@ -82,6 +86,9 @@ public class MovieDetailFragment extends BaseFragment implements TrailerResponse
     @Bind(R.id.trailersList)
     RecyclerView trailerRecyclerView;
 
+    @Bind(R.id.iv_fav_icon)
+    ImageView iv_fav_icon;
+
     private ReviewAdapter reviewAdapter;
     private TrailerAdapter trailerAdapter;
 
@@ -117,17 +124,45 @@ public class MovieDetailFragment extends BaseFragment implements TrailerResponse
         ButterKnife.bind(this, view);
         fillUI();
         setUpRecyclerView();
+        requestForReviewAndTrailer();
 
+        return view;
+    }
+
+    @OnClick(R.id.iv_fav_icon)
+    void favIconSelected(){
+        iv_fav_icon.setImageDrawable(getActivity().getResources().getDrawable(R.drawable.red_heart));
+        addMovieToDb();
+    }
+
+    private void addMovieToDb(){
+        ContentValues values = new ContentValues();
+
+        values.put(FavMovieContract.Columns.MOVIE_ID , movie.getId());
+        values.put(FavMovieContract.Columns.MOVIE_TITLE , movie.getOriginal_title());
+        values.put(FavMovieContract.Columns.MOVIE_RELEASE_DATE , movie.getRelease_date());
+        values.put(FavMovieContract.Columns.MOVIE_RATING , movie.getVote_average());
+        values.put(FavMovieContract.Columns.MOVIE_SYNOPSIS , movie.getOverview());
+        values.put(FavMovieContract.Columns.MOVIE_POSTER_URL , movie.getPoster_path());
+
+
+        Uri uri = getActivity().getContentResolver().insert(
+                FavMovieContract.CONTENT_URI, values);
+
+
+    }
+
+    private void requestForReviewAndTrailer(){
         if(movie != null){
             loadTrailerList(movie.getId());
             loadReviewList(movie.getId());
         }else{
-            // make visiblity gone for trailer and reviews views
-
+            tv_ReviewLabel.setVisibility(View.GONE);
+            reviewRecyclerView.setVisibility(View.GONE);
+            tv_TrailerLabel.setVisibility(View.GONE);
+            trailerRecyclerView.setVisibility(View.GONE);
         }
-        return view;
     }
-
     private void setUpRecyclerView(){
         reviewLLmanager = new WrappingLinearLayoutManager(getActivity());
         reviewRecyclerView.setNestedScrollingEnabled(false);
