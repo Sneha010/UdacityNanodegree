@@ -19,7 +19,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.rey.material.widget.ProgressView;
 import com.udacity.myappportfolio.BaseActivity;
@@ -269,20 +268,20 @@ public class PopularMoviesMainActivityNew extends BaseActivity implements MovieM
 
         MenuItem item_popularity = popup.getMenu().findItem(R.id.sort_by_popularity);
         MenuItem item_voting = popup.getMenu().findItem(R.id.sort_by_voting);
-        MenuItem item_fav = popup.getMenu().findItem(R.id.favorites);
+        //MenuItem item_fav = popup.getMenu().findItem(R.id.favorites);
 
         Log.d("aaaa" , setSortByPopularityChecked + " "+setSortByVotingChecked +" "+setSortByFavChecked);
 
         if (setSortByPopularityChecked) {
             item_popularity.setChecked(true);
             item_voting.setChecked(false);
-            item_fav.setChecked(false);
+            //item_fav.setChecked(false);
         } else if(setSortByVotingChecked){
             item_voting.setChecked(true);
-            item_fav.setChecked(false);
+            //item_fav.setChecked(false);
             item_popularity.setChecked(false);
         }else if(setSortByFavChecked){
-            item_fav.setChecked(true);
+            //item_fav.setChecked(true);
             item_voting.setChecked(false);
             item_popularity.setChecked(false);
         }
@@ -377,7 +376,7 @@ public class PopularMoviesMainActivityNew extends BaseActivity implements MovieM
                 presenter.loadMovieList(getPageNo() , getSortBy());
                 return true;
             }
-            if (item.getItemId() == R.id.favorites) {
+           /* if (item.getItemId() == R.id.favorites) {
                 Toast.makeText(PopularMoviesMainActivityNew.this , "Hii", Toast.LENGTH_SHORT).show();
                 setSortByFavChecked = true;
                 setSortByPopularityChecked = false;
@@ -386,7 +385,7 @@ public class PopularMoviesMainActivityNew extends BaseActivity implements MovieM
                 clearMovieList();
                 displayMovieList(favMovieList);
                 return true;
-            }
+            }*/
             return false;
         }
     }

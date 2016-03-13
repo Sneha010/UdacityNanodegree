@@ -316,23 +316,16 @@ public class MovieListFragment extends BaseFragment implements MovieDBResponseLi
 
         if (setSortByPopularityChecked) {
             item_popularity.setChecked(true);
-            item_voting.setChecked(false);
-            item_fav.setChecked(false);
-        }
-        if(setSortByVotingChecked){
+        }else if(setSortByVotingChecked){
             item_voting.setChecked(true);
-            item_fav.setChecked(false);
-            item_popularity.setChecked(false);
-        }
-        if(setSortByFavChecked){
+        }else if(setSortByFavChecked){
             item_fav.setChecked(true);
-            item_voting.setChecked(false);
-            item_popularity.setChecked(false);
         }
 
         PopUpMenuEventHandle popUpMenuEventHandle = new PopUpMenuEventHandle(getActivity());
         popup.setOnMenuItemClickListener(popUpMenuEventHandle);
         popup.show();
+
     }
 
     @Override
