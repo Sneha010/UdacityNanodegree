@@ -98,7 +98,7 @@
         android:layout_marginRight="15dp"
         />
 
-        <include android:id="@+id/info_inner_layout"
+        <include
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             layout="@layout/movie_detail_inner_layout"
