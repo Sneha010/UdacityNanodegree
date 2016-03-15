@@ -1,9 +1,7 @@
 package com.udacity.myappportfolio.fragment;
 
 import android.content.ContentResolver;
-import android.content.ContentValues;
 import android.database.Cursor;
-import android.database.SQLException;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
@@ -38,19 +36,19 @@ import com.udacity.myappportfolio.db.FavMovieContract;
 import com.udacity.myappportfolio.model.Movie;
 import com.udacity.myappportfolio.model.ReviewMainBean;
 import com.udacity.myappportfolio.model.TrailerMainBean;
-import com.udacity.myappportfolio.net.ReviewResponseListener;
-import com.udacity.myappportfolio.net.TheMovieDBClient;
-import com.udacity.myappportfolio.net.TrailerResponseListener;
+import com.udacity.myappportfolio.presenter.ReviewTrailerPresenter;
+import com.udacity.myappportfolio.presenter.ReviewTrailerPresenterImpl;
 import com.udacity.myappportfolio.util.Constants;
 import com.udacity.myappportfolio.util.MyUtil;
 import com.udacity.myappportfolio.util.PaletteTransformation;
 import com.udacity.myappportfolio.util.WrappingLinearLayoutManager;
+import com.udacity.myappportfolio.view.MovieDetailView;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class MovieDetailFragment extends BaseFragment implements TrailerResponseListener,ReviewResponseListener{
+public class MovieDetailFragment extends BaseFragment implements MovieDetailView{
 
 
     @Bind(R.id.collapsingToolbar)
@@ -99,8 +97,8 @@ public class MovieDetailFragment extends BaseFragment implements TrailerResponse
     private WrappingLinearLayoutManager trailerLLmanager;
 
     Movie movie;
-    private TheMovieDBClient client;
     boolean isFavorite = false;
+    private ReviewTrailerPresenter presenter;
 
     public static MovieDetailFragment getInstance(Movie movie){
         MovieDetailFragment frag = new MovieDetailFragment();
@@ -114,6 +112,8 @@ public class MovieDetailFragment extends BaseFragment implements TrailerResponse
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+
+        presenter = new ReviewTrailerPresenterImpl(this);
 
          if (getArguments() != null) {
             movie = getArguments().getParcelable("movieBean");
@@ -135,57 +135,27 @@ public class MovieDetailFragment extends BaseFragment implements TrailerResponse
 
     @OnClick(R.id.iv_fav_icon)
     void favIconSelected(){
-        if(isFavorite)
-            deleteMovieFromDb();
-        else
-            addMovieToDb();
-    }
-
-    private void addMovieToDb(){
-
-        try {
-            ContentValues values = new ContentValues();
-
-            values.put(FavMovieContract.Columns.MOVIE_ID , movie.getId());
-            values.put(FavMovieContract.Columns.MOVIE_TITLE , movie.getOriginal_title());
-            values.put(FavMovieContract.Columns.MOVIE_RELEASE_DATE , movie.getRelease_date());
-            values.put(FavMovieContract.Columns.MOVIE_RATING , movie.getVote_average());
-            values.put(FavMovieContract.Columns.MOVIE_SYNOPSIS , movie.getOverview());
-            values.put(FavMovieContract.Columns.MOVIE_POSTER_URL , movie.getPoster_path());
-
-
-            Uri uri = getActivity().getContentResolver().insert(
-                    FavMovieContract.CONTENT_URI, values);
-
-            MyUtil.displayCustomToast(getActivity() , getActivity().getResources().getString(R.string.movie_added));
-            iv_fav_icon.setImageResource(R.drawable.red_heart);
-
-            isFavorite = true;
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-            isFavorite = false;
-            MyUtil.displayCustomToast(getActivity() , getActivity().getResources().getString(R.string.error_movie_added));
+        if(isFavorite){
+            if(presenter.removeMovieToDb(getActivity() , movie.getId()) == 0){
+                MyUtil.displayCustomToast(getActivity() , getActivity().getResources().getString(R.string.movie_removed));
+                iv_fav_icon.setImageResource(R.drawable.grey_trans_heart);
+                isFavorite = false;
+            }else{
+                MyUtil.displayCustomToast(getActivity() , getActivity().getResources().getString(R.string.error_movie_removed));
+                iv_fav_icon.setImageResource(R.drawable.red_heart);
+                isFavorite = true;
+            }
+        }
+        else{
+            isFavorite = presenter.addMovieToDb(getActivity() , movie);
+            if(isFavorite){
+                MyUtil.displayCustomToast(getActivity() , getActivity().getResources().getString(R.string.movie_added));
+                iv_fav_icon.setImageResource(R.drawable.red_heart);
+            }else{
+                MyUtil.displayCustomToast(getActivity() , getActivity().getResources().getString(R.string.error_movie_added));
+            }
         }
 
-
-    }
-
-    private void deleteMovieFromDb(){
-        Uri uri = FavMovieContract.CONTENT_URI;
-        int result = getActivity().getContentResolver().delete(uri,
-                FavMovieContract.Columns.MOVIE_ID + "=?",
-                new String[]{movie.getId()+""});
-
-        if(result == 0){
-            MyUtil.displayCustomToast(getActivity() , getActivity().getResources().getString(R.string.movie_removed));
-            iv_fav_icon.setImageResource(R.drawable.grey_trans_heart);
-            isFavorite = false;
-        }else{
-            MyUtil.displayCustomToast(getActivity() , getActivity().getResources().getString(R.string.error_movie_removed));
-            iv_fav_icon.setImageResource(R.drawable.red_heart);
-            isFavorite = true;
-        }
     }
 
     private void requestForReviewAndTrailer(){
@@ -215,15 +185,12 @@ public class MovieDetailFragment extends BaseFragment implements TrailerResponse
 
     private void loadTrailerList(int id){
 
-        client = TheMovieDBClient.getInstance();
-        client.loadTrailers(id, this);
-
+        presenter.fetchTrailers(id);
     }
 
     private void loadReviewList(int id){
 
-        client = TheMovieDBClient.getInstance();
-        client.loadReviews(id, this);
+        presenter.fetchTrailers(id);
 
     }
 

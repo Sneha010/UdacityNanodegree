@@ -2,8 +2,9 @@ package com.udacity.myappportfolio.net;
 
 import android.app.Activity;
 import android.content.ContentResolver;
-import android.content.Context;
+import android.content.ContentValues;
 import android.database.Cursor;
+import android.database.SQLException;
 import android.net.Uri;
 
 import com.squareup.okhttp.OkHttpClient;
@@ -28,11 +29,7 @@ public class TheMovieDBClient {
 
     private MovieRestAPI myService = null;
 
-    private Context context;
-
     private static TheMovieDBClient client;
-
-
 
     private TheMovieDBClient() {
 
@@ -149,6 +146,39 @@ public class TheMovieDBClient {
         }
 
         return favMovieList;
+    }
+
+    public boolean insertMovieToDb(Activity context ,Movie movie){
+        try {
+            ContentValues values = new ContentValues();
+
+            values.put(FavMovieContract.Columns.MOVIE_ID , movie.getId());
+            values.put(FavMovieContract.Columns.MOVIE_TITLE , movie.getOriginal_title());
+            values.put(FavMovieContract.Columns.MOVIE_RELEASE_DATE , movie.getRelease_date());
+            values.put(FavMovieContract.Columns.MOVIE_RATING , movie.getVote_average());
+            values.put(FavMovieContract.Columns.MOVIE_SYNOPSIS , movie.getOverview());
+            values.put(FavMovieContract.Columns.MOVIE_POSTER_URL , movie.getPoster_path());
+
+
+            Uri uri = context.getContentResolver().insert(
+                    FavMovieContract.CONTENT_URI, values);
+
+           return true;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+           return false;
+        }
+
+    }
+
+    public int deleteMovieToDb(Activity context, int id){
+        Uri uri = FavMovieContract.CONTENT_URI;
+        int result = context.getContentResolver().delete(uri,
+                FavMovieContract.Columns.MOVIE_ID + "=?",
+                new String[]{id+""});
+
+        return result;
     }
 
 

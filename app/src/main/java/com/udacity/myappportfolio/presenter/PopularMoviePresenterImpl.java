@@ -10,9 +10,7 @@ import com.udacity.myappportfolio.view.MovieMainView;
 
 import java.util.ArrayList;
 
-/**
- * Created by 587823 on 2/15/2016.
- */
+
 public class PopularMoviePresenterImpl implements PopularMoviePresenter, MovieDBResponseListener {
 
     private MovieMainView movieMainView;
