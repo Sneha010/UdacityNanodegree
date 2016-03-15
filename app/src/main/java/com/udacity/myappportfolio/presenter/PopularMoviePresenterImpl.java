@@ -1,9 +1,14 @@
 package com.udacity.myappportfolio.presenter;
 
+import android.app.Activity;
+
+import com.udacity.myappportfolio.model.Movie;
 import com.udacity.myappportfolio.model.MovieMainBean;
 import com.udacity.myappportfolio.net.MovieDBResponseListener;
 import com.udacity.myappportfolio.net.TheMovieDBClient;
 import com.udacity.myappportfolio.view.MovieMainView;
+
+import java.util.ArrayList;
 
 /**
  * Created by 587823 on 2/15/2016.
@@ -19,7 +24,7 @@ public class PopularMoviePresenterImpl implements PopularMoviePresenter, MovieDB
     }
 
     @Override
-    public void loadMovieList(int pageNo , String sortBy ) {
+    public void fetchMovieList(int pageNo , String sortBy ) {
 
         if (movieMainView.getMovieList().size() > 0) {
                 movieMainView.showListProgress();
@@ -28,6 +33,14 @@ public class PopularMoviePresenterImpl implements PopularMoviePresenter, MovieDB
             }
 
         interactor.loadMovies(pageNo,sortBy, this);
+    }
+
+    @Override
+    public ArrayList<Movie> fetchMovieFromDb(Activity context) {
+
+            movieMainView.showProgress();
+
+        return interactor.loadMovieFromDb(context);
     }
 
     @Override

@@ -1,4 +1,4 @@
-package com.udacity.myappportfolio;
+package com.udacity.myappportfolio.activity;
 
 import android.support.v7.app.AppCompatActivity;
 

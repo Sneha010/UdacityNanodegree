@@ -1,13 +1,21 @@
 package com.udacity.myappportfolio.net;
 
+import android.app.Activity;
+import android.content.ContentResolver;
 import android.content.Context;
+import android.database.Cursor;
+import android.net.Uri;
 
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.logging.HttpLoggingInterceptor;
+import com.udacity.myappportfolio.db.FavMovieContract;
+import com.udacity.myappportfolio.model.Movie;
 import com.udacity.myappportfolio.model.MovieMainBean;
 import com.udacity.myappportfolio.model.ReviewMainBean;
 import com.udacity.myappportfolio.model.TrailerMainBean;
 import com.udacity.myappportfolio.util.Constants;
+
+import java.util.ArrayList;
 
 import retrofit.Call;
 import retrofit.Callback;
@@ -110,6 +118,38 @@ public class TheMovieDBClient {
         });
     }
 
+    public ArrayList<Movie> loadMovieFromDb(Activity context) {
+        ArrayList<Movie> favMovieList = new ArrayList<>();
+
+        Uri uri = FavMovieContract.CONTENT_URI;
+        ContentResolver resolver = context.getContentResolver();
+        String[] projection = new String[]{FavMovieContract.Columns.MOVIE_ID,
+                FavMovieContract.Columns.MOVIE_TITLE,
+                FavMovieContract.Columns.MOVIE_RELEASE_DATE,
+                FavMovieContract.Columns.MOVIE_RATING,
+                FavMovieContract.Columns.MOVIE_SYNOPSIS,
+                FavMovieContract.Columns.MOVIE_POSTER_URL};
+        Cursor cursor =
+                resolver.query(uri, projection,null, null,null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                Movie m = new Movie();
+
+                m.setId(cursor.getInt(0));
+                m.setOriginal_title(cursor.getString(1));
+                m.setRelease_date(cursor.getString(2));
+                m.setVote_average(Double.parseDouble(cursor.getString(3)));
+                m.setOverview(cursor.getString(4));
+                m.setPoster_path(cursor.getString(5));
+
+                favMovieList.add(m);
+
+            } while (cursor.moveToNext());
+        }
+
+        return favMovieList;
+    }
 
 
     private OkHttpClient getLoggingClient(){

@@ -1,4 +1,4 @@
-package com.udacity.myappportfolio;
+package com.udacity.myappportfolio.activity;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -6,9 +6,8 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
-import android.widget.LinearLayout;
 
+import com.udacity.myappportfolio.R;
 import com.udacity.myappportfolio.fragment.MovieDetailFragment;
 import com.udacity.myappportfolio.fragment.MovieListFragment;
 import com.udacity.myappportfolio.model.Movie;
@@ -16,19 +15,12 @@ import com.udacity.myappportfolio.model.Movie;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
-/**
- * Created by 587823 on 3/1/2016.
- */
+
 public class MoviesMainActivity extends BaseActivity implements MovieListFragment.OnItemSelectedListener{
 
     @Bind(R.id.toolbar)
     Toolbar toolbar;
 
-    @Bind(R.id.ll_listView)
-    LinearLayout ll_listView;
-
-   /* @Bind(R.id.ll_detailView)
-    LinearLayout ll_detailView;*/
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -46,7 +38,7 @@ public class MoviesMainActivity extends BaseActivity implements MovieListFragmen
     private void displayMovieList(){
 
         FragmentManager fm = getSupportFragmentManager();
-        android.support.v4.app.FragmentTransaction ft = fm.beginTransaction();
+        FragmentTransaction ft = fm.beginTransaction();
         MovieListFragment listFrament = MovieListFragment.getInstance();
 
         if(getResources().getBoolean(R.bool.isTablet)){
@@ -76,8 +68,6 @@ public class MoviesMainActivity extends BaseActivity implements MovieListFragmen
 
     @Override
     public void onBackPressed() {
-
-        Log.d("@@@@ " , getSupportFragmentManager().getBackStackEntryCount()+"");
 
         Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.ll_listView);
 

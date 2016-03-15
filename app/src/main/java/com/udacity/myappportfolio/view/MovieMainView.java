@@ -16,6 +16,8 @@ public interface MovieMainView {
 
     void showGrid();
 
+    void allViewGone();
+
     void showError(String message);
 
     List<Movie> getMovieList();

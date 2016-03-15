@@ -1,12 +1,16 @@
 package com.udacity.myappportfolio.presenter;
 
-/**
- * Created by 587823 on 2/15/2016.
- */
+import android.app.Activity;
+
+import com.udacity.myappportfolio.model.Movie;
+
+import java.util.ArrayList;
+
 public interface PopularMoviePresenter {
 
-    void loadMovieList( int pageNo ,String sortBy);
+    void fetchMovieList( int pageNo ,String sortBy);
 
+    ArrayList<Movie> fetchMovieFromDb(Activity context);
 
     void onDestroy();
 
