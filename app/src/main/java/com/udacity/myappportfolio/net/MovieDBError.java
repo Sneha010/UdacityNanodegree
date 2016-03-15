@@ -1,8 +1,6 @@
 package com.udacity.myappportfolio.net;
 
-/**
- * Created by 587823 on 2/2/2016.
- */
+
 public class MovieDBError {
 
     private int errorCode;

@@ -3,9 +3,6 @@ package com.udacity.myappportfolio.model;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by HP on 1/3/2016.
- */
 public class MovieMainBean {
     private int page;
     private List<Movie> results= new ArrayList<Movie>();

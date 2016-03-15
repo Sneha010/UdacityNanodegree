@@ -6,9 +6,7 @@ import android.os.Parcelable;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by HP on 1/3/2016.
- */
+
 public class Movie implements Parcelable{
     private String poster_path;
     private boolean adult;
