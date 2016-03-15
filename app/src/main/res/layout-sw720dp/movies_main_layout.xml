@@ -14,23 +14,34 @@
         android:orientation="horizontal"
         android:layout_below="@id/toolbar">
 
-        <LinearLayout
-            android:id="@+id/ll_listView"
+        <RelativeLayout
+            android:id="@+id/rl_listView"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:orientation="vertical">
 
-        </LinearLayout>
+        </RelativeLayout>
 
-        <LinearLayout
-            android:id="@+id/ll_detailView"
+        <RelativeLayout
+            android:id="@+id/rl_detailView"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:orientation="vertical">
 
-        </LinearLayout>
+            <com.udacity.myappportfolio.util.TextViewGothamBook
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/tap_left_pane"
+                android:textSize="@dimen/large_text_size"
+                android:textColor="@color/secondaryTextColor"
+                android:layout_centerInParent="true"
+                android:gravity="center"
+                android:lineSpacingExtra="2dp"
+                android:layout_margin="15dp"/>
+
+        </RelativeLayout>
 
 
     </LinearLayout>

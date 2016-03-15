@@ -181,6 +181,15 @@ public class TheMovieDBClient {
         return result;
     }
 
+    public Cursor loadAllFavMovies(Activity context){
+        Uri uri = FavMovieContract.CONTENT_URI;
+        ContentResolver resolver = context.getContentResolver();
+        String[] projection = new String[]{FavMovieContract.Columns.MOVIE_ID, FavMovieContract.Columns.MOVIE_TITLE};
+        Cursor cursor =
+                resolver.query(uri, projection,null, null,null);
+
+        return cursor;
+    }
 
     private OkHttpClient getLoggingClient(){
 

@@ -24,6 +24,9 @@
     <string name="server_error">Could not connect to server,\n Please try again later!</string>
     <string name="not_available">Not Available</string>
 
+    <!--Action Messages-->
+    <string name="tap_left_pane">Tap movie in left pane to view its details.</string>
+
     <!--Movie Info Part-->
     <string name="release_date">Release Date:</string>
     <string name="synopsis">Synopsis</string>

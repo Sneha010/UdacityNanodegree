@@ -2,6 +2,7 @@ package com.udacity.myappportfolio.presenter;
 
 
 import android.app.Activity;
+import android.database.Cursor;
 
 import com.udacity.myappportfolio.model.Movie;
 import com.udacity.myappportfolio.model.ReviewMainBean;
@@ -41,6 +42,24 @@ public class ReviewTrailerPresenterImpl implements ReviewTrailerPresenter,Review
     @Override
     public int removeMovieToDb(Activity context , int id){
         return interactor.deleteMovieToDb(context , id);
+    }
+
+    @Override
+    public boolean checkForFavMovie(Activity context , int id) {
+
+        Cursor cursor = interactor.loadAllFavMovies(context);
+
+        if (cursor.moveToFirst()) {
+            do {
+                long _id = cursor.getInt(0);
+
+                if(_id == id){
+                   return true;
+                }
+
+            } while (cursor.moveToNext());
+        }
+        return false;
     }
 
 

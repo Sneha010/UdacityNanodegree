@@ -42,10 +42,10 @@ public class MoviesMainActivity extends BaseActivity implements MovieListFragmen
         MovieListFragment listFrament = MovieListFragment.getInstance();
 
         if(getResources().getBoolean(R.bool.isTablet)){
-            ft.add(R.id.ll_listView, listFrament);
+            ft.add(R.id.rl_listView, listFrament);
             ft.commit();
         }else{
-            ft.add(R.id.ll_listView, listFrament,"HOME");
+            ft.add(R.id.rl_listView, listFrament,"HOME");
             ft.addToBackStack("listFragment");
             ft.commit();
         }
@@ -57,10 +57,10 @@ public class MoviesMainActivity extends BaseActivity implements MovieListFragmen
         FragmentTransaction ft = fm.beginTransaction();
 
         if(getResources().getBoolean(R.bool.isTablet)){
-            ft.replace(R.id.ll_detailView, MovieDetailFragment.getInstance(movie));
+            ft.replace(R.id.rl_detailView, MovieDetailFragment.getInstance(movie));
             ft.commit();
         }else{
-            ft.replace(R.id.ll_listView, MovieDetailFragment.getInstance(movie),"DETAILS");
+            ft.replace(R.id.rl_listView, MovieDetailFragment.getInstance(movie),"DETAILS");
             ft.addToBackStack("listFragment");
             ft.commit();
         }
@@ -69,7 +69,7 @@ public class MoviesMainActivity extends BaseActivity implements MovieListFragmen
     @Override
     public void onBackPressed() {
 
-        Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.ll_listView);
+        Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.rl_listView);
 
         if (fragment instanceof MovieListFragment) {
             supportFinishAfterTransition();

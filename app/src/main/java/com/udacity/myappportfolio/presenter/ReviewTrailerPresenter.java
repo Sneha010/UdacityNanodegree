@@ -11,4 +11,5 @@ public interface ReviewTrailerPresenter {
     void fetchTrailers(int id);
     boolean addMovieToDb(Activity context , Movie movie);
     int removeMovieToDb(Activity context , int id);
+    boolean checkForFavMovie(Activity context , int id);
 }
