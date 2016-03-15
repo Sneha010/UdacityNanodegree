@@ -10,15 +10,13 @@ import android.widget.ImageView;
 
 import com.squareup.picasso.Picasso;
 import com.udacity.myappportfolio.R;
-import com.udacity.myappportfolio.bean.Movie;
+import com.udacity.myappportfolio.model.Movie;
 import com.udacity.myappportfolio.util.Constants;
 import com.udacity.myappportfolio.util.MyUtil;
 
 import java.util.List;
 
-/**
- * Created by HP on 1/4/2016.
- */
+
 public class MovieRecyclerViewAdapter extends RecyclerView.Adapter<MovieRecyclerViewAdapter.MovieViewHolder> implements RecyclerView.OnItemTouchListener{
 
     private List<Movie> movieList;

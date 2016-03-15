@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <include
+        android:id="@+id/toolbar"
+        layout="@layout/toolbar"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:weightSum="2"
+        android:orientation="horizontal"
+        android:layout_below="@id/toolbar">
+
+        <RelativeLayout
+            android:id="@+id/rl_listView"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/rl_detailView"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <com.udacity.myappportfolio.util.TextViewGothamBook
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/tap_left_pane"
+                android:textSize="@dimen/large_text_size"
+                android:textColor="@color/secondaryTextColor"
+                android:layout_centerInParent="true"
+                android:gravity="center"
+                android:lineSpacingExtra="2dp"
+                android:layout_margin="15dp"/>
+
+        </RelativeLayout>
+
+
+    </LinearLayout>
+
+
+</RelativeLayout>

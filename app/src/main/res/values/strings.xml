@@ -24,7 +24,19 @@
     <string name="server_error">Could not connect to server,\n Please try again later!</string>
     <string name="not_available">Not Available</string>
 
+    <!--Action Messages-->
+    <string name="tap_left_pane">Tap movie in left pane to view its details.</string>
+
     <!--Movie Info Part-->
     <string name="release_date">Release Date:</string>
     <string name="synopsis">Synopsis</string>
+    <string name="reviews">Reviews</string>
+    <string name="trailers">Trailers</string>
+
+    <!--Favorites-->
+    <string name="movie_added">Movie added to Favorites</string>
+    <string name="movie_removed">Movie removed from Favorites</string>
+    <string name="error_movie_added">Error in inserting Movie to Favorites</string>
+    <string name="error_movie_removed">Error in removing Movie from Favorites</string>
+    <string name="no_fav_movie">No Favorite movie added.</string>
 </resources>

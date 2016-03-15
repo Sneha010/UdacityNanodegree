@@ -1,19 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical" android:layout_width="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
     android:layout_height="match_parent">
-
-    <include
-        android:id="@+id/toolbar" layout="@layout/toolbar"/>
-
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:layout_below="@id/toolbar">
-
 
 
             <RelativeLayout
@@ -27,6 +18,7 @@
                 android:id="@+id/list"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                tools:listitem="@layout/movie_grid_layout"
                 />
 
             <com.rey.material.widget.ProgressView
@@ -64,9 +56,14 @@
             <include layout="@layout/error_layout" />
         </RelativeLayout>
 
-    </RelativeLayout>
-
-
-
+    <com.udacity.myappportfolio.util.TextViewGothamBook
+        android:id="@+id/tv_NoFavMovieAddedText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:textSize="@dimen/large_text_size"
+        android:textColor="@color/secondaryTextColor"
+        android:text="@string/no_fav_movie"
+        android:visibility="gone"/>
 
 </RelativeLayout>
