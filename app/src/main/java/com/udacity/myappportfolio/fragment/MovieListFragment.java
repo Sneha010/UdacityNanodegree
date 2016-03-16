@@ -319,7 +319,6 @@ public class MovieListFragment extends BaseFragment implements MovieMainView {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        super.onOptionsItemSelected(item);
         switch (item.getItemId()) {
 
             case R.id.action_sort:
@@ -328,7 +327,7 @@ public class MovieListFragment extends BaseFragment implements MovieMainView {
             default:
 
         }
-        return true;
+        return super.onOptionsItemSelected(item);
     }
 
 

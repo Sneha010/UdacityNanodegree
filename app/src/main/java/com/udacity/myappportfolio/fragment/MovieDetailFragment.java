@@ -1,5 +1,6 @@
 package com.udacity.myappportfolio.fragment;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.LayerDrawable;
@@ -91,6 +92,8 @@ public class MovieDetailFragment extends BaseFragment implements MovieDetailView
     boolean isFavorite = false;
     private ReviewTrailerPresenter presenter;
 
+    private TrailerMainBean trailerData;
+
     public static MovieDetailFragment getInstance(Movie movie) {
         MovieDetailFragment frag = new MovieDetailFragment();
         Bundle args = new Bundle();
@@ -103,7 +106,6 @@ public class MovieDetailFragment extends BaseFragment implements MovieDetailView
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-
         if (getArguments() != null) {
 
             movie = getArguments().getParcelable(MOVIE_BEAN_KEY);
@@ -135,6 +137,7 @@ public class MovieDetailFragment extends BaseFragment implements MovieDetailView
         requestForReviewAndTrailer();
 
     }
+
 
 
     @SuppressWarnings("unused")
@@ -310,16 +313,26 @@ public class MovieDetailFragment extends BaseFragment implements MovieDetailView
         if (isAdded()) {
             if (bean != null) {
                 if (bean.getResults().size() > 0) {
+                    //Saving the trailer data as global for share intent
+                    this.trailerData = bean;
                     trailerAdapter = new TrailerAdapter(getActivity(), bean.getResults());
                     trailerRecyclerView.setAdapter(trailerAdapter);
                     tv_TrailerLabel.setVisibility(View.VISIBLE);
                     trailerRecyclerView.setVisibility(View.VISIBLE);
+
+                    updateOptionMenuStatus();
+
                 } else {
                     tv_TrailerLabel.setVisibility(View.GONE);
                     trailerRecyclerView.setVisibility(View.GONE);
                 }
             }
         }
+
+    }
+
+    private void updateOptionMenuStatus() {
+        getActivity().invalidateOptionsMenu();
 
     }
 
@@ -335,15 +348,42 @@ public class MovieDetailFragment extends BaseFragment implements MovieDetailView
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.main, menu);
+
+        if (trailerData != null) {
+
+            menu.findItem(R.id.share_trailer).setVisible(true);
+
+        }
+
     }
+
+
 
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        //finish();
+        switch (item.getItemId()) {
+
+            case R.id.share_trailer:
+                createShareChooser();
+
+                break;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
         return true;
     }
 
+
+    private void createShareChooser( ) {
+        String shareBody = "Watch the trailer for awesome movie : " + movie.getTitle();
+        Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
+        sharingIntent.setType("text/plain");
+        sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, movie.getTitle());
+        sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareBody + "\n" + Constants.YOUTUBE_BASE_URL
+                + trailerData.getResults().get(0).getKey());
+        startActivity(Intent.createChooser(sharingIntent, getResources().getString(R.string.share_using)));
+    }
 
 }
 
