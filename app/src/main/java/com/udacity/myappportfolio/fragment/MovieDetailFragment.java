@@ -4,6 +4,7 @@ import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.LayerDrawable;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.widget.RecyclerView;
@@ -37,8 +38,9 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class MovieDetailFragment extends BaseFragment implements MovieDetailView{
+public class MovieDetailFragment extends BaseFragment implements MovieDetailView {
 
+    private static final String MOVIE_BEAN_KEY = "movieBean";
 
     @Bind(R.id.collapsingToolbar)
     CollapsingToolbarLayout collapsingToolbarLayout;
@@ -85,14 +87,14 @@ public class MovieDetailFragment extends BaseFragment implements MovieDetailView
     private WrappingLinearLayoutManager reviewLLmanager;
     private WrappingLinearLayoutManager trailerLLmanager;
 
-    Movie movie;
+    private Movie movie;
     boolean isFavorite = false;
     private ReviewTrailerPresenter presenter;
 
-    public static MovieDetailFragment getInstance(Movie movie){
+    public static MovieDetailFragment getInstance(Movie movie) {
         MovieDetailFragment frag = new MovieDetailFragment();
         Bundle args = new Bundle();
-        args.putParcelable("movieBean" , movie );
+        args.putParcelable(MOVIE_BEAN_KEY, movie);
         frag.setArguments(args);
         return frag;
     }
@@ -102,12 +104,14 @@ public class MovieDetailFragment extends BaseFragment implements MovieDetailView
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
 
-        presenter = new ReviewTrailerPresenterImpl(this);
+        if (getArguments() != null) {
 
-         if (getArguments() != null) {
-            movie = getArguments().getParcelable("movieBean");
+            movie = getArguments().getParcelable(MOVIE_BEAN_KEY);
 
         }
+
+        presenter = new ReviewTrailerPresenterImpl(this);
+
     }
 
 
@@ -115,50 +119,62 @@ public class MovieDetailFragment extends BaseFragment implements MovieDetailView
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.movie_detail_layout, container, false);
         ButterKnife.bind(this, view);
-        fillUI();
-        setUpRecyclerView();
-        requestForReviewAndTrailer();
 
         return view;
     }
 
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        fillUI();
+
+        setUpRecyclerView();
+
+        requestForReviewAndTrailer();
+
+    }
+
+
+    @SuppressWarnings("unused")
     @OnClick(R.id.iv_fav_icon)
-    void favIconSelected(){
-        if(isFavorite){
-            if(presenter.removeMovieToDb(getActivity() , movie.getId()) == 0){
-                MyUtil.displayCustomToast(getActivity() , getActivity().getResources().getString(R.string.movie_removed));
+    void favIconSelected() {
+        if (isFavorite) {
+            if (presenter.removeMovieToDb(getActivity(), movie.getId()) == 0) {
+                MyUtil.displayCustomToast(getActivity(), getActivity().getResources().getString(R.string.movie_removed));
                 iv_fav_icon.setImageResource(R.drawable.grey_trans_heart);
                 isFavorite = false;
-            }else{
-                MyUtil.displayCustomToast(getActivity() , getActivity().getResources().getString(R.string.error_movie_removed));
+            } else {
+                MyUtil.displayCustomToast(getActivity(), getActivity().getResources().getString(R.string.error_movie_removed));
                 iv_fav_icon.setImageResource(R.drawable.red_heart);
                 isFavorite = true;
             }
-        }
-        else{
-            isFavorite = presenter.addMovieToDb(getActivity() , movie);
-            if(isFavorite){
-                MyUtil.displayCustomToast(getActivity() , getActivity().getResources().getString(R.string.movie_added));
+        } else {
+            isFavorite = presenter.addMovieToDb(getActivity(), movie);
+            if (isFavorite) {
+                MyUtil.displayCustomToast(getActivity(), getActivity().getResources().getString(R.string.movie_added));
                 iv_fav_icon.setImageResource(R.drawable.red_heart);
-            }else{
-                MyUtil.displayCustomToast(getActivity() , getActivity().getResources().getString(R.string.error_movie_added));
+            } else {
+                MyUtil.displayCustomToast(getActivity(), getActivity().getResources().getString(R.string.error_movie_added));
             }
         }
 
     }
 
-    private void requestForReviewAndTrailer(){
-        if(movie != null){
+    private void requestForReviewAndTrailer() {
+        if (movie != null) {
             loadTrailerList(movie.getId());
             loadReviewList(movie.getId());
-        }else{
+        } else {
             tv_ReviewLabel.setVisibility(View.GONE);
             reviewRecyclerView.setVisibility(View.GONE);
             tv_TrailerLabel.setVisibility(View.GONE);
             trailerRecyclerView.setVisibility(View.GONE);
         }
     }
-    private void setUpRecyclerView(){
+
+    private void setUpRecyclerView() {
         reviewLLmanager = new WrappingLinearLayoutManager(getActivity());
         reviewRecyclerView.setNestedScrollingEnabled(false);
         reviewRecyclerView.setHasFixedSize(false);
@@ -172,12 +188,12 @@ public class MovieDetailFragment extends BaseFragment implements MovieDetailView
 
     }
 
-    private void loadTrailerList(int id){
+    private void loadTrailerList(int id) {
 
         presenter.fetchTrailers(id);
     }
 
-    private void loadReviewList(int id){
+    private void loadReviewList(int id) {
 
         presenter.fetchReviews(id);
 
@@ -222,11 +238,11 @@ public class MovieDetailFragment extends BaseFragment implements MovieDetailView
         checkForFavMovie();
     }
 
-    private void checkForFavMovie(){
+    private void checkForFavMovie() {
 
-        isFavorite = presenter.checkForFavMovie(getActivity() , movie.getId());
+        isFavorite = presenter.checkForFavMovie(getActivity(), movie.getId());
 
-        if(isFavorite)
+        if (isFavorite)
             iv_fav_icon.setImageResource(R.drawable.red_heart);
         else
             iv_fav_icon.setImageResource(R.drawable.grey_trans_heart);
@@ -261,16 +277,19 @@ public class MovieDetailFragment extends BaseFragment implements MovieDetailView
 
     @Override
     public void onReviewSuccess(ReviewMainBean bean) {
+        if (isAdded()) {
 
-        if(bean!=null){
-            if(bean.getResults().size() > 0){
-                reviewAdapter = new ReviewAdapter(getActivity(), bean.getResults() , movie.getOriginal_title());
-                reviewRecyclerView.setAdapter(reviewAdapter);
-                tv_ReviewLabel.setVisibility(View.VISIBLE);
-                reviewRecyclerView.setVisibility(View.VISIBLE);
-            }else{
-                tv_ReviewLabel.setVisibility(View.GONE);
-                reviewRecyclerView.setVisibility(View.GONE);
+            if (bean != null) {
+                if (bean.getResults().size() > 0) {
+                    reviewAdapter = new ReviewAdapter(getActivity(), bean.getResults(), movie.getOriginal_title());
+                    reviewRecyclerView.setAdapter(reviewAdapter);
+                    tv_ReviewLabel.setVisibility(View.VISIBLE);
+                    reviewRecyclerView.setVisibility(View.VISIBLE);
+                } else {
+                    tv_ReviewLabel.setVisibility(View.GONE);
+                    reviewRecyclerView.setVisibility(View.GONE);
+                }
+
             }
 
         }
@@ -279,29 +298,37 @@ public class MovieDetailFragment extends BaseFragment implements MovieDetailView
 
     @Override
     public void onReviewFailure(Throwable t) {
-        tv_ReviewLabel.setVisibility(View.GONE);
-        reviewRecyclerView.setVisibility(View.GONE);
+        if (isAdded()) {
+            tv_ReviewLabel.setVisibility(View.GONE);
+            reviewRecyclerView.setVisibility(View.GONE);
+        }
+
     }
 
     @Override
     public void onTrailerSuccess(TrailerMainBean bean) {
-        if(bean!=null){
-            if(bean.getResults().size() > 0) {
-                trailerAdapter = new TrailerAdapter(getActivity(), bean.getResults());
-                trailerRecyclerView.setAdapter(trailerAdapter);
-                tv_TrailerLabel.setVisibility(View.VISIBLE);
-                trailerRecyclerView.setVisibility(View.VISIBLE);
-            }else{
-                tv_TrailerLabel.setVisibility(View.GONE);
-                trailerRecyclerView.setVisibility(View.GONE);
+        if (isAdded()) {
+            if (bean != null) {
+                if (bean.getResults().size() > 0) {
+                    trailerAdapter = new TrailerAdapter(getActivity(), bean.getResults());
+                    trailerRecyclerView.setAdapter(trailerAdapter);
+                    tv_TrailerLabel.setVisibility(View.VISIBLE);
+                    trailerRecyclerView.setVisibility(View.VISIBLE);
+                } else {
+                    tv_TrailerLabel.setVisibility(View.GONE);
+                    trailerRecyclerView.setVisibility(View.GONE);
+                }
             }
         }
+
     }
 
     @Override
     public void onTrailerFailure(Throwable t) {
-        tv_TrailerLabel.setVisibility(View.GONE);
-        trailerRecyclerView.setVisibility(View.GONE);
+        if (isAdded()) {
+            tv_TrailerLabel.setVisibility(View.GONE);
+            trailerRecyclerView.setVisibility(View.GONE);
+        }
     }
 
     @Override
@@ -309,7 +336,6 @@ public class MovieDetailFragment extends BaseFragment implements MovieDetailView
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.main, menu);
     }
-
 
 
     @Override

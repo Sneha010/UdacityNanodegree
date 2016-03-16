@@ -14,7 +14,7 @@ public class FavMovieProvider extends ContentProvider{
 
     private SQLiteDatabase db;
     private MovieDBHelper movieDBHelper;
-    public static final UriMatcher uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
+    private static final UriMatcher uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
 
     static {
         uriMatcher.addURI(FavMovieContract.AUTHORITY,FavMovieContract.TABLE,FavMovieContract.MOVIES_LIST);

@@ -65,22 +65,21 @@ public class MovieListFragment extends BaseFragment implements MovieMainView {
     @Bind(R.id.tv_NoFavMovieAddedText)
     TextView tv_NoFavMovieAddedText;
 
-    private boolean setSortByPopularityChecked = true , setSortByVotingChecked = false ,
-            setSortByFavChecked = false;
+    private boolean isSortByPopularityChecked = true, isSortByVotingChecked = false,
+            isSortByFavChecked = false;
+
+    private boolean isComingFromBack = false;
 
     private boolean loading = true;
-    private int pastVisiblesItems, visibleItemCount, totalItemCount;
+    private int pastVisibleItems, visibleItemCount, totalItemCount;
     private GridLayoutManager mLayoutManager;
     private String sortBy = Constants.POPULARITY;
     private int pageNo = 1;
     private ArrayList<Movie> dynamicResultList = new ArrayList<>();
     private MovieRecyclerViewAdapter newsListViewAdapter;
-    private OnItemSelectedListener itemSelectlistener;
+    private OnItemSelectedListener itemSelectListener;
     private PopularMoviePresenter presenter;
 
-    public interface OnItemSelectedListener {
-        void itemSelected(Movie movie);
-    }
 
     @Override
     public List<Movie> getMovieList() {
@@ -91,15 +90,15 @@ public class MovieListFragment extends BaseFragment implements MovieMainView {
         return pageNo;
     }
 
-    public void setPageNo(int pageNo){
+    public void setPageNo(int pageNo) {
         this.pageNo = pageNo;
     }
 
-    public String getSortBy(){
+    public String getSortBy() {
         return sortBy;
     }
 
-    public void setSortBy(String sortBy){
+    public void setSortBy(String sortBy) {
         this.sortBy = sortBy;
     }
 
@@ -125,30 +124,33 @@ public class MovieListFragment extends BaseFragment implements MovieMainView {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.movies_list_layout, container, false);
         ButterKnife.bind(this, view);
-
-        prepareUI();
-
         return view;
     }
+
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        if(dynamicResultList!=null && dynamicResultList.size()>0){
+        prepareUI();
+
+        if (dynamicResultList != null && dynamicResultList.size() > 0) {
+            //Means coming from back pressed on detail screen, so everything is ready we just need to setup the adapter.
+            isComingFromBack = true;
+            //it might happen that user removed the movie from favourites on details screen so only for favourite bother the db again
+            if (isSortByFavChecked) {
+                dynamicResultList = presenter.fetchMovieFromDb(getActivity());
+            }
+            
             displayMovieList(dynamicResultList);
-        }else{
-
-            presenter.fetchMovieList(getPageNo() , getSortBy());
-
+        } else {
+            presenter.fetchMovieList(getPageNo(), getSortBy());
         }
     }
 
     private void prepareUI() {
-
         setUpGridListView();
         setUpListeners();
-
     }
 
     @SuppressWarnings("unused")
@@ -156,7 +158,7 @@ public class MovieListFragment extends BaseFragment implements MovieMainView {
     public void fetchMovieAgain() {
         setPageNo(1);
         clearMovieList();
-        presenter.fetchMovieList(getPageNo() , getSortBy());
+        presenter.fetchMovieList(getPageNo(), getSortBy());
     }
 
     private void setUpListeners() {
@@ -171,19 +173,19 @@ public class MovieListFragment extends BaseFragment implements MovieMainView {
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
 
-                if (dy > 0 && !setSortByFavChecked) //check for scroll down
+                if (dy > 0 && !isSortByFavChecked) //check for scroll down
                 {
                     visibleItemCount = mLayoutManager.getChildCount();
                     totalItemCount = mLayoutManager.getItemCount();
-                    pastVisiblesItems = mLayoutManager.findFirstVisibleItemPosition();
+                    pastVisibleItems = mLayoutManager.findFirstVisibleItemPosition();
 
-                    Log.d("@@@", "visibleItemCount = " + visibleItemCount + " totalItemCount = " + totalItemCount + " pastVisiblesItems = " + pastVisiblesItems);
+                    Log.d("@@@", "visibleItemCount = " + visibleItemCount + " totalItemCount = " + totalItemCount + " pastVisiblesItems = " + pastVisibleItems);
 
                     if (loading) {
-                        if ((visibleItemCount + pastVisiblesItems) >= totalItemCount) {
+                        if ((visibleItemCount + pastVisibleItems) >= totalItemCount) {
                             loading = false;
                             //Do pagination.. i.e. fetch new data
-                            presenter.fetchMovieList(getPageNo() , getSortBy());
+                            presenter.fetchMovieList(getPageNo(), getSortBy());
                         }
                     }
                 }
@@ -198,13 +200,14 @@ public class MovieListFragment extends BaseFragment implements MovieMainView {
                         // TODO Handle item click
                         if (MyUtil.notEmpty(dynamicResultList)) {
 
-                            if(itemSelectlistener!=null)
-                                itemSelectlistener.itemSelected(dynamicResultList.get(position));
+                            if (itemSelectListener != null)
+                                itemSelectListener.itemSelected(dynamicResultList.get(position));
                         }
                     }
                 })
         );
     }
+
 
     private void setUpGridListView() {
         lv_gridList.setHasFixedSize(true);
@@ -215,26 +218,30 @@ public class MovieListFragment extends BaseFragment implements MovieMainView {
 
 
     private void displayMovieList(List<Movie> movieBeanList) {
-        if(movieBeanList.size()==0){
+
+        if (movieBeanList.size() == 0) {
             tv_NoFavMovieAddedText.setVisibility(View.VISIBLE);
             allViewGone();
-        }else{
+        } else {
             tv_NoFavMovieAddedText.setVisibility(View.GONE);
-            if (getPageNo() == 2 || setSortByFavChecked) {
-                newsListViewAdapter = new MovieRecyclerViewAdapter(
-                        getActivity(), movieBeanList);
-                lv_gridList.setItemAnimator(new FadeInAnimator());
-                AlphaInAnimationAdapter alphaAdapter = new AlphaInAnimationAdapter(newsListViewAdapter);
-                ScaleInAnimationAdapter scaleAdapter = new ScaleInAnimationAdapter(alphaAdapter);
-                lv_gridList.setAdapter(scaleAdapter);
+            if (newsListViewAdapter == null || isSortByFavChecked || isComingFromBack) {
+                setListViewAdapter(movieBeanList);
             } else {
                 newsListViewAdapter.updateMovieList(movieBeanList);
             }
-
             showGrid();
         }
 
 
+    }
+
+    private void setListViewAdapter(List<Movie> movieBeanList) {
+        newsListViewAdapter = new MovieRecyclerViewAdapter(
+                getActivity(), movieBeanList);
+        lv_gridList.setItemAnimator(new FadeInAnimator());
+        AlphaInAnimationAdapter alphaAdapter = new AlphaInAnimationAdapter(newsListViewAdapter);
+        ScaleInAnimationAdapter scaleAdapter = new ScaleInAnimationAdapter(alphaAdapter);
+        lv_gridList.setAdapter(scaleAdapter);
     }
 
     public void clearMovieList() {
@@ -292,7 +299,7 @@ public class MovieListFragment extends BaseFragment implements MovieMainView {
 
         if (dynamicResultList != null && dynamicResultList.size() > 0) {
 
-            MyUtil.showSnackbar(rl_gridView , message);
+            MyUtil.showSnackbar(rl_gridView, message);
 
         } else {
             rl_gridView.setVisibility(View.GONE);
@@ -316,14 +323,13 @@ public class MovieListFragment extends BaseFragment implements MovieMainView {
         switch (item.getItemId()) {
 
             case R.id.action_sort:
-                showPopUpMenu((View) getActivity().findViewById(R.id.action_sort));
+                showPopUpMenu(getActivity().findViewById(R.id.action_sort));
                 break;
             default:
 
         }
         return true;
     }
-
 
 
     private void showPopUpMenu(View menuItemAnchor) {
@@ -335,11 +341,11 @@ public class MovieListFragment extends BaseFragment implements MovieMainView {
         MenuItem item_voting = popup.getMenu().findItem(R.id.sort_by_voting);
         MenuItem item_fav = popup.getMenu().findItem(R.id.favorites);
 
-        if (setSortByPopularityChecked) {
+        if (isSortByPopularityChecked) {
             item_popularity.setChecked(true);
-        }else if(setSortByVotingChecked){
+        } else if (isSortByVotingChecked) {
             item_voting.setChecked(true);
-        }else if(setSortByFavChecked){
+        } else if (isSortByFavChecked) {
             item_fav.setChecked(true);
         }
 
@@ -351,81 +357,44 @@ public class MovieListFragment extends BaseFragment implements MovieMainView {
 
     @Override
     public void onSuccess(MovieMainBean bean) {
-        if (bean != null) {
+        if (isAdded()) {
+            if (bean != null) {
 
-            if (bean.getResults() != null && bean.getResults().size() > 0) {
-                int page = getPageNo();
-                page++;
-                setPageNo(page);
-                isLoading(true);
-                getMovieList().addAll(bean.getResults());
-                displayMovieList(bean.getResults());
+                if (bean.getResults() != null && bean.getResults().size() > 0) {
+                    int page = getPageNo();
+                    page++;
+                    setPageNo(page);
+                    isLoading(true);
+                    getMovieList().addAll(bean.getResults());
+                    displayMovieList(bean.getResults());
+                } else {
+                    showError(getResources().getString(R.string.no_results));
+                }
             } else {
                 showError(getResources().getString(R.string.no_results));
             }
-        } else {
-            showError(getResources().getString(R.string.no_results));
         }
+
     }
 
     @Override
     public void onFailure(Throwable t) {
-        if(t instanceof IOException)
-            showError(getResources().getString(R.string.no_internet));
-        else
-            showError(getResources().getString(R.string.server_error));
+        if (isAdded()) {
+            if (t instanceof IOException)
+                showError(getResources().getString(R.string.no_internet));
+            else
+                showError(getResources().getString(R.string.server_error));
+        }
 
     }
 
-    public class PopUpMenuEventHandle implements PopupMenu.OnMenuItemClickListener {
-        Context context;
-
-        public PopUpMenuEventHandle(Context context) {
-            this.context = context;
-        }
-
-        @Override
-        public boolean onMenuItemClick(MenuItem item) {
-            if (item.getItemId() == R.id.sort_by_popularity) {
-                setSortByPopularityChecked = true;
-                setSortByVotingChecked = false;
-                setSortByFavChecked = false;
-                setSortBy(Constants.POPULARITY);
-                setPageNo(1);
-                clearMovieList();
-                presenter.fetchMovieList(getPageNo() , getSortBy());
-                return true;
-            }
-            if (item.getItemId() == R.id.sort_by_voting) {
-                setSortByVotingChecked = true;
-                setSortByPopularityChecked = false;
-                setSortByFavChecked = false;
-                setSortBy(Constants.VOTE_AVERAGE);
-                setPageNo(1);
-                clearMovieList();
-                presenter.fetchMovieList(getPageNo() , getSortBy());
-                return true;
-            }
-            if (item.getItemId() == R.id.favorites) {
-                setSortByFavChecked = true;
-                setSortByPopularityChecked = false;
-                setSortByVotingChecked = false;
-                ArrayList<Movie> favMovieList = presenter.fetchMovieFromDb(getActivity());
-                clearMovieList();
-                addMovieList(favMovieList);
-                displayMovieList(dynamicResultList);
-                return true;
-            }
-            return false;
-        }
-    }
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
 
         if (context instanceof OnItemSelectedListener) {
-            itemSelectlistener = (OnItemSelectedListener) context;
+            itemSelectListener = (OnItemSelectedListener) context;
         } else {
             throw new ClassCastException(context.toString()
                     + " must implemenet MyListFragment.OnItemSelectedListener");
@@ -435,7 +404,7 @@ public class MovieListFragment extends BaseFragment implements MovieMainView {
     @Override
     public void onDetach() {
         super.onDetach();
-        itemSelectlistener = null;
+        itemSelectListener = null;
     }
 
     @Override
@@ -443,6 +412,56 @@ public class MovieListFragment extends BaseFragment implements MovieMainView {
         super.onConfigurationChanged(newConfig);
         mLayoutManager.setSpanCount(newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE ? 3 : 2);
 
+    }
 
+
+    //Interface to pass the events to attached activity
+    public interface OnItemSelectedListener {
+        void itemSelected(Movie movie);
+    }
+
+
+    private class PopUpMenuEventHandle implements PopupMenu.OnMenuItemClickListener {
+
+        private final Context context;
+
+        public PopUpMenuEventHandle(Context context) {
+            this.context = context;
+        }
+
+        @Override
+        public boolean onMenuItemClick(MenuItem item) {
+            if (item.getItemId() == R.id.sort_by_popularity) {
+                isSortByPopularityChecked = true;
+                isSortByVotingChecked = false;
+                isSortByFavChecked = false;
+                setSortBy(Constants.POPULARITY);
+                setPageNo(1);
+                clearMovieList();
+                presenter.fetchMovieList(getPageNo(), getSortBy());
+                return true;
+            }
+            if (item.getItemId() == R.id.sort_by_voting) {
+                isSortByVotingChecked = true;
+                isSortByPopularityChecked = false;
+                isSortByFavChecked = false;
+                setSortBy(Constants.VOTE_AVERAGE);
+                setPageNo(1);
+                clearMovieList();
+                presenter.fetchMovieList(getPageNo(), getSortBy());
+                return true;
+            }
+            if (item.getItemId() == R.id.favorites) {
+                isSortByFavChecked = true;
+                isSortByPopularityChecked = false;
+                isSortByVotingChecked = false;
+                ArrayList<Movie> favMovieList = presenter.fetchMovieFromDb(getActivity());
+                clearMovieList();
+                addMovieList(favMovieList);
+                displayMovieList(dynamicResultList);
+                return true;
+            }
+            return false;
+        }
     }
 }
