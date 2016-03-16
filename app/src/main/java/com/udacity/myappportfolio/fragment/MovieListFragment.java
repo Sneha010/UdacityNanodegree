@@ -323,11 +323,11 @@ public class MovieListFragment extends BaseFragment implements MovieMainView {
 
             case R.id.action_sort:
                 showPopUpMenu(getActivity().findViewById(R.id.action_sort));
-                break;
+                return true;
             default:
-
+                return super.onOptionsItemSelected(item);
         }
-        return super.onOptionsItemSelected(item);
+
     }
 
 

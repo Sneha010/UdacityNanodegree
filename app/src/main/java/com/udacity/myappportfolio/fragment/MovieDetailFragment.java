@@ -366,12 +366,10 @@ public class MovieDetailFragment extends BaseFragment implements MovieDetailView
 
             case R.id.share_trailer:
                 createShareChooser();
-
-                break;
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
-        return true;
     }
 
 
