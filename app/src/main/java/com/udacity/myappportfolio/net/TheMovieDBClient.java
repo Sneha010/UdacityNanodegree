@@ -1,13 +1,22 @@
 package com.udacity.myappportfolio.net;
 
-import android.content.Context;
+import android.app.Activity;
+import android.content.ContentResolver;
+import android.content.ContentValues;
+import android.database.Cursor;
+import android.database.SQLException;
+import android.net.Uri;
 
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.logging.HttpLoggingInterceptor;
+import com.udacity.myappportfolio.db.FavMovieContract;
+import com.udacity.myappportfolio.model.Movie;
 import com.udacity.myappportfolio.model.MovieMainBean;
 import com.udacity.myappportfolio.model.ReviewMainBean;
 import com.udacity.myappportfolio.model.TrailerMainBean;
 import com.udacity.myappportfolio.util.Constants;
+
+import java.util.ArrayList;
 
 import retrofit.Call;
 import retrofit.Callback;
@@ -20,16 +29,13 @@ public class TheMovieDBClient {
 
     private MovieRestAPI myService = null;
 
-    private Context context;
-
     private static TheMovieDBClient client;
 
+    private TheMovieDBClient() {
 
-
-    private TheMovieDBClient(String baseParams) {
 
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(Constants.BASE_URL + baseParams)
+                .baseUrl(Constants.BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
                 //.client(getLoggingClient())
                 .build();
@@ -38,16 +44,15 @@ public class TheMovieDBClient {
     }
 
 
-    public static TheMovieDBClient getInstance(String baseParams) {
+    public static TheMovieDBClient getInstance() {
 
         if (client == null) {
-            client = new TheMovieDBClient(baseParams);
+            client = new TheMovieDBClient();
         }
 
         return client;
 
     }
-
 
     public void loadMovies(int pageNo , String sortBy, final MovieDBResponseListener listener) {
 
@@ -69,9 +74,9 @@ public class TheMovieDBClient {
         });
     }
 
-    public void loadTrailers(final TrailerResponseListener listener) {
+    public void loadTrailers(int movieId, final TrailerResponseListener listener) {
 
-        Call<TrailerMainBean> call = myService.loadTrailers(Constants.API_KEY);
+        Call<TrailerMainBean> call = myService.loadTrailers(movieId ,Constants.API_KEY);
 
         call.enqueue(new Callback<TrailerMainBean>() {
             @Override
@@ -90,9 +95,9 @@ public class TheMovieDBClient {
     }
 
 
-    public void loadReviews(final ReviewResponseListener listener) {
+    public void loadReviews(int movieId ,final ReviewResponseListener listener) {
 
-        Call<ReviewMainBean> call = myService.loadReviews(Constants.API_KEY);
+        Call<ReviewMainBean> call = myService.loadReviews(movieId, Constants.API_KEY);
 
         call.enqueue(new Callback<ReviewMainBean>() {
             @Override
@@ -110,7 +115,81 @@ public class TheMovieDBClient {
         });
     }
 
+    public ArrayList<Movie> loadMovieFromDb(Activity context) {
+        ArrayList<Movie> favMovieList = new ArrayList<>();
 
+        Uri uri = FavMovieContract.CONTENT_URI;
+        ContentResolver resolver = context.getContentResolver();
+        String[] projection = new String[]{FavMovieContract.Columns.MOVIE_ID,
+                FavMovieContract.Columns.MOVIE_TITLE,
+                FavMovieContract.Columns.MOVIE_RELEASE_DATE,
+                FavMovieContract.Columns.MOVIE_RATING,
+                FavMovieContract.Columns.MOVIE_SYNOPSIS,
+                FavMovieContract.Columns.MOVIE_POSTER_URL};
+        Cursor cursor =
+                resolver.query(uri, projection,null, null,null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                Movie m = new Movie();
+
+                m.setId(cursor.getInt(0));
+                m.setOriginal_title(cursor.getString(1));
+                m.setRelease_date(cursor.getString(2));
+                m.setVote_average(Double.parseDouble(cursor.getString(3)));
+                m.setOverview(cursor.getString(4));
+                m.setPoster_path(cursor.getString(5));
+
+                favMovieList.add(m);
+
+            } while (cursor.moveToNext());
+        }
+
+        return favMovieList;
+    }
+
+    public boolean insertMovieToDb(Activity context ,Movie movie){
+        try {
+            ContentValues values = new ContentValues();
+
+            values.put(FavMovieContract.Columns.MOVIE_ID , movie.getId());
+            values.put(FavMovieContract.Columns.MOVIE_TITLE , movie.getOriginal_title());
+            values.put(FavMovieContract.Columns.MOVIE_RELEASE_DATE , movie.getRelease_date());
+            values.put(FavMovieContract.Columns.MOVIE_RATING , movie.getVote_average());
+            values.put(FavMovieContract.Columns.MOVIE_SYNOPSIS , movie.getOverview());
+            values.put(FavMovieContract.Columns.MOVIE_POSTER_URL , movie.getPoster_path());
+
+
+            Uri uri = context.getContentResolver().insert(
+                    FavMovieContract.CONTENT_URI, values);
+
+           return true;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+           return false;
+        }
+
+    }
+
+    public int deleteMovieToDb(Activity context, int id){
+        Uri uri = FavMovieContract.CONTENT_URI;
+        int result = context.getContentResolver().delete(uri,
+                FavMovieContract.Columns.MOVIE_ID + "=?",
+                new String[]{id+""});
+
+        return result;
+    }
+
+    public Cursor loadAllFavMovies(Activity context){
+        Uri uri = FavMovieContract.CONTENT_URI;
+        ContentResolver resolver = context.getContentResolver();
+        String[] projection = new String[]{FavMovieContract.Columns.MOVIE_ID, FavMovieContract.Columns.MOVIE_TITLE};
+        Cursor cursor =
+                resolver.query(uri, projection,null, null,null);
+
+        return cursor;
+    }
 
     private OkHttpClient getLoggingClient(){
 

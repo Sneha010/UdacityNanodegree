@@ -6,9 +6,7 @@ import android.os.Parcelable;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by HP on 1/3/2016.
- */
+
 public class Movie implements Parcelable{
     private String poster_path;
     private boolean adult;
@@ -25,7 +23,7 @@ public class Movie implements Parcelable{
     private boolean video;
     private double vote_average;
 
-    protected Movie(Parcel in) {
+    public Movie(Parcel in) {
         poster_path = in.readString();
         adult = in.readByte() != 0;
         overview = in.readString();
@@ -41,6 +39,9 @@ public class Movie implements Parcelable{
         vote_average = in.readDouble();
     }
 
+    public Movie(){
+
+    }
     public static final Creator<Movie> CREATOR = new Creator<Movie>() {
         @Override
         public Movie createFromParcel(Parcel in) {

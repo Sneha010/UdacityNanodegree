@@ -1,4 +1,4 @@
-package com.udacity.myappportfolio;
+package com.udacity.myappportfolio.activity;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -6,9 +6,9 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.view.Window;
 
-/**
- * Created by 587823 on 12/24/2015.
- */
+import com.udacity.myappportfolio.R;
+
+
 public class SplashActivity extends Activity {
 
     private static final int SPLASHTIME = 2000;

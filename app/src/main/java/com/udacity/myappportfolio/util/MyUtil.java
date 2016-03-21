@@ -12,9 +12,7 @@ import com.udacity.myappportfolio.R;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Created by HP on 12/24/2015.
- */
+
 public class MyUtil {
 
     public static void displayCustomToast(Context context, String message) {

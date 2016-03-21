@@ -16,9 +16,7 @@ import com.udacity.myappportfolio.util.MyUtil;
 
 import java.util.List;
 
-/**
- * Created by HP on 1/4/2016.
- */
+
 public class MovieRecyclerViewAdapter extends RecyclerView.Adapter<MovieRecyclerViewAdapter.MovieViewHolder> implements RecyclerView.OnItemTouchListener{
 
     private List<Movie> movieList;

@@ -1,9 +1,10 @@
-package com.udacity.myappportfolio;
+package com.udacity.myappportfolio.activity;
 
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 
+import com.udacity.myappportfolio.R;
 import com.udacity.myappportfolio.util.MyUtil;
 
 import butterknife.Bind;

@@ -23,12 +23,12 @@ import com.udacity.myappportfolio.R;
 import com.udacity.myappportfolio.adapter.MovieRecyclerViewAdapter;
 import com.udacity.myappportfolio.model.Movie;
 import com.udacity.myappportfolio.model.MovieMainBean;
-import com.udacity.myappportfolio.net.MovieDBResponseListener;
-import com.udacity.myappportfolio.net.MovieRestAPI;
-import com.udacity.myappportfolio.net.TheMovieDBClient;
+import com.udacity.myappportfolio.presenter.PopularMoviePresenter;
+import com.udacity.myappportfolio.presenter.PopularMoviePresenterImpl;
 import com.udacity.myappportfolio.util.Constants;
 import com.udacity.myappportfolio.util.MyUtil;
 import com.udacity.myappportfolio.util.RecyclerItemClickListener;
+import com.udacity.myappportfolio.view.MovieMainView;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -42,7 +42,7 @@ import jp.wasabeef.recyclerview.animators.adapters.AlphaInAnimationAdapter;
 import jp.wasabeef.recyclerview.animators.adapters.ScaleInAnimationAdapter;
 
 
-public class MovieListFragment extends BaseFragment implements MovieDBResponseListener {
+public class MovieListFragment extends BaseFragment implements MovieMainView {
 
     @Bind(R.id.list)
     RecyclerView lv_gridList;
@@ -62,21 +62,49 @@ public class MovieListFragment extends BaseFragment implements MovieDBResponseLi
     @Bind(R.id.progress_pv_circular_colors)
     ProgressView listProgressView;
 
-    private boolean setSortByPopularityChecked = true;
+    @Bind(R.id.tv_NoFavMovieAddedText)
+    TextView tv_NoFavMovieAddedText;
+
+    private boolean setSortByPopularityChecked = true , setSortByVotingChecked = false ,
+            setSortByFavChecked = false;
 
     private boolean loading = true;
     private int pastVisiblesItems, visibleItemCount, totalItemCount;
     private GridLayoutManager mLayoutManager;
-    private MovieRestAPI myService;
-    private String sort_by = Constants.POPULARITY;
-    private int page = 1;
+    private String sortBy = Constants.POPULARITY;
+    private int pageNo = 1;
     private ArrayList<Movie> dynamicResultList = new ArrayList<>();
     private MovieRecyclerViewAdapter newsListViewAdapter;
-    private TheMovieDBClient client;
     private OnItemSelectedListener itemSelectlistener;
+    private PopularMoviePresenter presenter;
 
     public interface OnItemSelectedListener {
         void itemSelected(Movie movie);
+    }
+
+    @Override
+    public List<Movie> getMovieList() {
+        return dynamicResultList;
+    }
+
+    public int getPageNo() {
+        return pageNo;
+    }
+
+    public void setPageNo(int pageNo){
+        this.pageNo = pageNo;
+    }
+
+    public String getSortBy(){
+        return sortBy;
+    }
+
+    public void setSortBy(String sortBy){
+        this.sortBy = sortBy;
+    }
+
+    public void isLoading(boolean isloading) {
+        loading = isloading;
     }
 
     public static MovieListFragment getInstance() {
@@ -89,6 +117,8 @@ public class MovieListFragment extends BaseFragment implements MovieDBResponseLi
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+
+        presenter = new PopularMoviePresenterImpl(this);
     }
 
     @Override
@@ -109,7 +139,7 @@ public class MovieListFragment extends BaseFragment implements MovieDBResponseLi
             displayMovieList(dynamicResultList);
         }else{
 
-            loadMovieList();
+            presenter.fetchMovieList(getPageNo() , getSortBy());
 
         }
     }
@@ -124,11 +154,10 @@ public class MovieListFragment extends BaseFragment implements MovieDBResponseLi
     @SuppressWarnings("unused")
     @OnClick(R.id.rl_error)
     public void fetchMovieAgain() {
-        dynamicResultList.clear();
-        page = 1;
-        loadMovieList();
+        setPageNo(1);
+        clearMovieList();
+        presenter.fetchMovieList(getPageNo() , getSortBy());
     }
-
 
     private void setUpListeners() {
 
@@ -142,7 +171,7 @@ public class MovieListFragment extends BaseFragment implements MovieDBResponseLi
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
 
-                if (dy > 0) //check for scroll down
+                if (dy > 0 && !setSortByFavChecked) //check for scroll down
                 {
                     visibleItemCount = mLayoutManager.getChildCount();
                     totalItemCount = mLayoutManager.getItemCount();
@@ -154,7 +183,7 @@ public class MovieListFragment extends BaseFragment implements MovieDBResponseLi
                         if ((visibleItemCount + pastVisiblesItems) >= totalItemCount) {
                             loading = false;
                             //Do pagination.. i.e. fetch new data
-                            loadMovieList();
+                            presenter.fetchMovieList(getPageNo() , getSortBy());
                         }
                     }
                 }
@@ -185,58 +214,76 @@ public class MovieListFragment extends BaseFragment implements MovieDBResponseLi
     }
 
 
-    private void loadMovieList() {
-        if (dynamicResultList.size() > 0) {
-            showListProgress();
-        } else {
-            showProgress();
-        }
-
-        client = TheMovieDBClient.getInstance("");
-
-        client.loadMovies(page,sort_by , this);
-
-    }
-
-
     private void displayMovieList(List<Movie> movieBeanList) {
-        if (page == 2) {
-            newsListViewAdapter = new MovieRecyclerViewAdapter(
-                    getActivity(), movieBeanList);
-            lv_gridList.setItemAnimator(new FadeInAnimator());
-            AlphaInAnimationAdapter alphaAdapter = new AlphaInAnimationAdapter(newsListViewAdapter);
-            ScaleInAnimationAdapter scaleAdapter = new ScaleInAnimationAdapter(alphaAdapter);
-            lv_gridList.setAdapter(scaleAdapter);
-        } else {
-            newsListViewAdapter.updateMovieList(movieBeanList);
+        if(movieBeanList.size()==0){
+            tv_NoFavMovieAddedText.setVisibility(View.VISIBLE);
+            allViewGone();
+        }else{
+            tv_NoFavMovieAddedText.setVisibility(View.GONE);
+            if (getPageNo() == 2 || setSortByFavChecked) {
+                newsListViewAdapter = new MovieRecyclerViewAdapter(
+                        getActivity(), movieBeanList);
+                lv_gridList.setItemAnimator(new FadeInAnimator());
+                AlphaInAnimationAdapter alphaAdapter = new AlphaInAnimationAdapter(newsListViewAdapter);
+                ScaleInAnimationAdapter scaleAdapter = new ScaleInAnimationAdapter(alphaAdapter);
+                lv_gridList.setAdapter(scaleAdapter);
+            } else {
+                newsListViewAdapter.updateMovieList(movieBeanList);
+            }
+
+            showGrid();
         }
 
-        showGrid();
 
     }
 
-    private void showProgress() {
+    public void clearMovieList() {
+        dynamicResultList.clear();
+    }
+
+    public void addMovieList(ArrayList<Movie> movieList) {
+        dynamicResultList.addAll(movieList);
+    }
+
+
+    @Override
+    public void showProgress() {
         rl_progress.setVisibility(View.VISIBLE);
+        rl_gridView.setVisibility(View.GONE);
+        rl_error.setVisibility(View.GONE);
+        listProgressView.setVisibility(View.GONE);
+        tv_NoFavMovieAddedText.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void showListProgress() {
+        rl_progress.setVisibility(View.GONE);
+        rl_gridView.setVisibility(View.VISIBLE);
+        rl_error.setVisibility(View.GONE);
+        listProgressView.setVisibility(View.VISIBLE);
+        tv_NoFavMovieAddedText.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void showGrid() {
+        rl_progress.setVisibility(View.GONE);
+        rl_gridView.setVisibility(View.VISIBLE);
+        rl_error.setVisibility(View.GONE);
+        listProgressView.setVisibility(View.GONE);
+        tv_NoFavMovieAddedText.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void allViewGone() {
+        rl_progress.setVisibility(View.GONE);
         rl_gridView.setVisibility(View.GONE);
         rl_error.setVisibility(View.GONE);
         listProgressView.setVisibility(View.GONE);
     }
 
-    private void showListProgress() {
-        rl_progress.setVisibility(View.GONE);
-        rl_gridView.setVisibility(View.VISIBLE);
-        rl_error.setVisibility(View.GONE);
-        listProgressView.setVisibility(View.VISIBLE);
-    }
 
-    private void showGrid() {
-        rl_progress.setVisibility(View.GONE);
-        rl_gridView.setVisibility(View.VISIBLE);
-        rl_error.setVisibility(View.GONE);
-        listProgressView.setVisibility(View.GONE);
-    }
-
-    private void showError(String message) {
+    @Override
+    public void showError(String message) {
 
         loading = true;
 
@@ -286,27 +333,32 @@ public class MovieListFragment extends BaseFragment implements MovieDBResponseLi
 
         MenuItem item_popularity = popup.getMenu().findItem(R.id.sort_by_popularity);
         MenuItem item_voting = popup.getMenu().findItem(R.id.sort_by_voting);
+        MenuItem item_fav = popup.getMenu().findItem(R.id.favorites);
 
         if (setSortByPopularityChecked) {
             item_popularity.setChecked(true);
-        } else {
-            item_voting.setChecked(false);
+        }else if(setSortByVotingChecked){
+            item_voting.setChecked(true);
+        }else if(setSortByFavChecked){
+            item_fav.setChecked(true);
         }
 
         PopUpMenuEventHandle popUpMenuEventHandle = new PopUpMenuEventHandle(getActivity());
         popup.setOnMenuItemClickListener(popUpMenuEventHandle);
         popup.show();
+
     }
 
     @Override
     public void onSuccess(MovieMainBean bean) {
-
         if (bean != null) {
 
             if (bean.getResults() != null && bean.getResults().size() > 0) {
+                int page = getPageNo();
                 page++;
-                loading = true;
-                dynamicResultList.addAll(bean.getResults());
+                setPageNo(page);
+                isLoading(true);
+                getMovieList().addAll(bean.getResults());
                 displayMovieList(bean.getResults());
             } else {
                 showError(getResources().getString(R.string.no_results));
@@ -318,7 +370,6 @@ public class MovieListFragment extends BaseFragment implements MovieDBResponseLi
 
     @Override
     public void onFailure(Throwable t) {
-
         if(t instanceof IOException)
             showError(getResources().getString(R.string.no_internet));
         else
@@ -335,20 +386,34 @@ public class MovieListFragment extends BaseFragment implements MovieDBResponseLi
 
         @Override
         public boolean onMenuItemClick(MenuItem item) {
-            if (!setSortByPopularityChecked && item.getItemId() == R.id.sort_by_popularity) {
+            if (item.getItemId() == R.id.sort_by_popularity) {
                 setSortByPopularityChecked = true;
-                sort_by = Constants.POPULARITY;
-                page = 1;
-                dynamicResultList.clear();
-                loadMovieList();
+                setSortByVotingChecked = false;
+                setSortByFavChecked = false;
+                setSortBy(Constants.POPULARITY);
+                setPageNo(1);
+                clearMovieList();
+                presenter.fetchMovieList(getPageNo() , getSortBy());
                 return true;
             }
-            if (setSortByPopularityChecked && item.getItemId() == R.id.sort_by_voting) {
+            if (item.getItemId() == R.id.sort_by_voting) {
+                setSortByVotingChecked = true;
                 setSortByPopularityChecked = false;
-                sort_by = Constants.VOTE_AVERAGE;
-                page = 1;
-                dynamicResultList.clear();
-                loadMovieList();
+                setSortByFavChecked = false;
+                setSortBy(Constants.VOTE_AVERAGE);
+                setPageNo(1);
+                clearMovieList();
+                presenter.fetchMovieList(getPageNo() , getSortBy());
+                return true;
+            }
+            if (item.getItemId() == R.id.favorites) {
+                setSortByFavChecked = true;
+                setSortByPopularityChecked = false;
+                setSortByVotingChecked = false;
+                ArrayList<Movie> favMovieList = presenter.fetchMovieFromDb(getActivity());
+                clearMovieList();
+                addMovieList(favMovieList);
+                displayMovieList(dynamicResultList);
                 return true;
             }
             return false;

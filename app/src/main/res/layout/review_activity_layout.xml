@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <include
+        android:id="@+id/toolbar"
+        layout="@layout/toolbar"/>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/toolbar">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+    <com.udacity.myappportfolio.util.TextViewGotham
+        android:id="@+id/tv_Author"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Author"
+        android:textSize="@dimen/large_text_size"
+        android:textColor="@color/primaryTextColor"
+        android:layout_margin="15dp"
+        />
+
+    <com.udacity.myappportfolio.util.TextViewGothamBook
+        android:id="@+id/tv_Review"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Review"
+        android:textSize="@dimen/medium_text_size"
+        android:textColor="@color/secondaryTextColor"
+        android:lineSpacingExtra="3dp"
+        android:layout_below="@id/tv_Author"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:layout_marginBottom="15dp"
+        />
+
+            </RelativeLayout>
+    </ScrollView>
+
+</RelativeLayout>

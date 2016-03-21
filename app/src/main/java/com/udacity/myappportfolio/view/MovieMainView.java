@@ -5,9 +5,7 @@ import com.udacity.myappportfolio.model.MovieMainBean;
 
 import java.util.List;
 
-/**
- * Created by 587823 on 2/15/2016.
- */
+
 public interface MovieMainView {
 
     void showProgress();
@@ -15,6 +13,8 @@ public interface MovieMainView {
     void showListProgress();
 
     void showGrid();
+
+    void allViewGone();
 
     void showError(String message);
 
